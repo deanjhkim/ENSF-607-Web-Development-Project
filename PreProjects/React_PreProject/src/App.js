@@ -1,84 +1,93 @@
-import logo from './logo.svg';
-import './App.css';
-import 'bulma/css/bulma.css'
-import {useState} from "react";
-import Center from 'react-center';
+import "bulma/css/bulma.css";
+import { useState, useReducer } from "react";
+
+const CounterDisplay = ({currentCounter}) => {
+  return (
+    <div className="column is-half has-text-centered">
+      <h1 className="title">{currentCounter}</h1>
+    </div>
+  );
+};
+
 function App() {
 
-  
+  //const [counter, setCounter] = useState(0);
 
-  const [counter, setCounter ] = useState(0);
+  const myReducer = (state, action) => {
+    if (isNaN(action.value)) return 0;
+
+    return (action.value > 100) ? 100 :
+      (action.value < 0) ? 0 : action.value;
+  };
+
+  const [counter, dispatch] = useReducer(myReducer, 0);
 
   const [inputValue, setInputValue] = useState("");
-  
+
+  const increment = () => {
+    dispatch({ value: (counter + 1) });
+  };
+
   const decrement = () => {
-    setCounter(counter - 1);
+    dispatch({ value: (counter - 1) });
   };
 
   const handleKeyDown = (e) => {
-    if (e.Key == 'Enter'){
-      setCounter(parseInt(inputValue));
+    if (e.key == "Enter") {
+      dispatch({ value: parseInt(inputValue) });
     }
   };
 
- 
 
   return (
 
- 
-    <Center>
-    <div className = "App">
-      <div className = "container">
-        <div className = "columns is-multiline">
-          <div className = "columns is-full">
-            <div className = "notification">
-              <div className = "columns">
-                <div className = "column is-half">
+    <div className="App">
+
+      <div className="container">
+
+        <div className="columns is-multiline">
+          <div className="column is-full">
+            <div className="notification">
+              <div className="columns">
+                <div className="column is-half">
                   <div className="field has-addons">
                     <div className="control">
-                      <input 
-                        className="input" 
+                      <input className="input"
                         type="text"
-                        
                         placeholder="Enter a number"
-                        value = {inputValue}
-                        onChange=  { (e)=> setInputValue(e.target.value)}
-                        onKeyDown = { (e)=> handleKeyDown(e.target.value)}
-                        
-                      />
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}>
+                      </input>
                     </div>
                     <div className="control">
                       <a className="button is-info"
-                        onClick = { () => setCounter(parseInt(inputValue))}
-                      >
+                        onClick={() => dispatch({ value: parseInt(inputValue) })}>
                         Assign
-                      </a>
+                        </a>
                     </div>
                   </div>
-                  <div className="buttons has-addons">
-                    <button className="button is-primary"
-                    onClick = {() => setCounter (counter +1)}
-                    
-                    >
-                      Up
-                    </button>
-                    <button className="button is-warning" onClick = {decrement}>
-                      Down
-                    </button>
+
+                  <div class="buttons has-addons">
+                    <button className="button"
+                      onClick={increment}>
+                      Up</button>
+                    <button className="button"
+                      onClick={decrement} >
+                      Down</button>
                   </div>
                 </div>
-                <div className = "column is-half has-text-centered">
-                  <h1 className = "title">{counter}</h1>
-                </div>
-              
+                <CounterDisplay currentCounter = {counter}/>
               </div>
+
             </div>
           </div>
         </div>
       </div>
+
     </div>
-    </Center>
   );
 }
 
 export default App;
+
