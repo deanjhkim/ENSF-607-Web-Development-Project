@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import 'bulma/css/bulma.css'
 import {useState} from "react";
+import Center from 'react-center';
 function App() {
 
   
@@ -20,8 +21,12 @@ function App() {
     }
   };
 
+ 
 
   return (
+
+ 
+    <Center>
     <div className = "App">
       <div className = "container">
         <div className = "columns is-multiline">
@@ -34,6 +39,7 @@ function App() {
                       <input 
                         className="input" 
                         type="text"
+                        
                         placeholder="Enter a number"
                         value = {inputValue}
                         onChange=  { (e)=> setInputValue(e.target.value)}
@@ -71,6 +77,7 @@ function App() {
         </div>
       </div>
     </div>
+    </Center>
   );
 }
 
