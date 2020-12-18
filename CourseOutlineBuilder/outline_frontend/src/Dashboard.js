@@ -70,13 +70,13 @@ function CreateFormDialog({ open, handleCreateClose }) {
   const [numberError, setNumberError] = useState(false);
 
   const [term, setTerm] = useState("");
-  const [termError, setTermError] = useState(true);
+  const [termError, setTermError] = useState(false);
 
   const [section, setSection] = useState("");
-  const [sectionError, setSectionError] = useState(true);
+  const [sectionError, setSectionError] = useState(false);
 
   const [description, setDescription] = useState("");
-  const [descError, setDescError] = useState(true);
+  const [descError, setDescError] = useState(false);
 
   const checkFields = () => {
     if (faculty === "" || faculty === null) {
@@ -116,12 +116,17 @@ function CreateFormDialog({ open, handleCreateClose }) {
 
   const handleCreate = () => {
     checkFields();
+    goToOutline();
     if (filledFields()) {
-      goToOutline();
+      
     }
   }
 
-  const goToOutline = () => history.push('/outline');
+  const goToOutline = () => {
+    <Route path='/outlineApp' component={Outline}
+      render={(props) => (<Outline {...props} faculty={faculty} number={number} term={term} section={section} description={description} />)} />
+    history.push('/outlineApp');
+  }
 
   const displayErrors = () => {
     console.log(facultyError);
@@ -153,39 +158,39 @@ function CreateFormDialog({ open, handleCreateClose }) {
               <TextField label='Faculty' onChange={e => setFaculty(e.target.value)} error={facultyError} helperText={facultyError ? "Field Required" : ''} />
             </Grid>
             <Grid item xs>
-              <TextField label='Number' onChange={e => setNumber(e.target.value)} error={numberError} helperText={numberError ? "Field Required" : ''}/>
+              <TextField label='Number' onChange={e => setNumber(e.target.value)} error={numberError} helperText={numberError ? "Field Required" : ''} />
             </Grid>
           </Grid>
-            <Grid container>
-              <Grid item xs>
-                <TextField label='Term' error={termError} onChange={e => setTerm(e.target.value)} helperText={termError ? "Field Required" : ''} />
-              </Grid>
-              <Grid item xs>
-                <TextField label='Section' onChange={e => setSection(e.target.value)} error={sectionError} helperText={sectionError ? "Field Required" : ''} />
-              </Grid>
+          <Grid container>
+            <Grid item xs>
+              <TextField label='Term' error={termError} onChange={e => setTerm(e.target.value)} helperText={termError ? "Field Required" : ''} />
+            </Grid>
+            <Grid item xs>
+              <TextField label='Section' onChange={e => setSection(e.target.value)} error={sectionError} helperText={sectionError ? "Field Required" : ''} />
             </Grid>
           </Grid>
-          <Box>
-            <TextField label='Description' fullWidth onChange={e => setDescription(e.target.value)} error={descError} helperText={descError ? "Field Required" : ''} />
-          </Box>
+        </Grid>
+        <Box>
+          <TextField label='Description' fullWidth onChange={e => setDescription(e.target.value)} error={descError} helperText={descError ? "Field Required" : ''} />
+        </Box>
       </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCreateClose} color="primary">
-            Cancel
+      <DialogActions>
+        <Button onClick={handleCreateClose} color="primary">
+          Cancel
         </Button>
-          <Button color="primary" onClick={handleCreate, displayErrors}>
-            Create
+        <Button color="primary" onClick={handleCreate}>
+          Create
         </Button>
-        </DialogActions>
+      </DialogActions>
     </Dialog>
   );
 }
 
 function Dashboard() {
 
-        function createOutline(faculty, number, term, section, description, dateCreated) {
-          return { faculty, number, term, section, description, dateCreated };
-        }
+  function createOutline(faculty, number, term, section, description, dateCreated) {
+    return { faculty, number, term, section, description, dateCreated };
+  }
 
   const outlines =
     [createOutline('ENSF', '607', 'W2020', 'LO1', 'Software Design and Architecture I', '2020-06-12'),
@@ -200,31 +205,31 @@ function Dashboard() {
   const [itemSelected, setItemSelected] = useState();
 
   return (
-      <div className="Dashboard">
-        <Box paddingLeft={2}>
-          <h1>
-            Course Outline Builder
+    <div className="Dashboard">
+      <Box paddingLeft={2}>
+        <h1>
+          Course Outline Builder
         </h1>
-        </Box>
+      </Box>
 
-        <Box paddingLeft={2}>
-          <ButtonGroup color="primary" aria-label="outlined primary button group">
-            <Button onClick={handleCreateOpen}>Create </Button>
-            <Button>Open </Button>
-            <Button>Delete </Button>
-          </ButtonGroup>
-        </Box>
+      <Box paddingLeft={2}>
+        <ButtonGroup color="primary" aria-label="outlined primary button group">
+          <Button onClick={handleCreateOpen}>Create </Button>
+          <Button>Open </Button>
+          <Button>Delete </Button>
+        </ButtonGroup>
+      </Box>
 
-        <Box paddingTop={2}>
-          <Divider />
-        </Box>
+      <Box paddingTop={2}>
+        <Divider />
+      </Box>
 
-        <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
+      <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
 
 
-        <CreateFormDialog open={open} handleCreateClose={handleCreateClose} />
+      <CreateFormDialog open={open} handleCreateClose={handleCreateClose} />
 
-      </div>
+    </div>
 
   );
 }
