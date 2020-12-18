@@ -12,6 +12,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+
 function Outline() {
 
     const [courseDesc, setCourseDesc] = useState("");
@@ -21,18 +23,46 @@ function Outline() {
     const [courseCredits, setCourseCredits] = useState("");
 
     const handleAddRow = () => {
-        return ( 0
+        return (0
         );
     };
 
     const handleRemoveRow = () => {
-        return ( 0
+        return (0
         );
     };
 
     const [calendarRef, setCalendarRef] = useState("");
 
     const [examInfo, setExamInfo] = useState("");
+
+    const handleSaveOpen = () => setSaveOpen(true);
+
+    const handleSaveClose = () => setSaveOpen(false);
+
+    const [open, setSaveOpen] = useState(false);
+
+    function CreateSaveDialog({ open, handleSaveClose}) {
+        return (
+            <Dialog open={open}>
+                <DialogTitle>
+                    Outline Created
+            </DialogTitle>
+                <DialogContent>
+                    <Box>
+                        <body>
+                            This is a dummy button to demonstrate that the inputs will be recorded into a database.
+                </body>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleSaveClose} color="primary">
+                        Cancel
+                     </Button>
+                </DialogActions>
+            </Dialog>
+        );
+    }
 
     return (
         <div className="Outline">
@@ -139,15 +169,17 @@ function Outline() {
                 <h2>
                     7. Final Grade Determination
                 </h2>
-            
+
             </Box>
 
 
             <Box width={1 / 2}>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" onClick={handleSaveOpen}>
                     Save
                 </Button>
             </Box>
+
+            <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
 
 
         </div>
