@@ -31,7 +31,7 @@ function Outline() {
     const handleAddRow = () => {
         const item = {
             id: "standard-full-width",
-            placeholder: "Enter Learning Objective",
+            placeholder: "Enter Learning Outcome",
             inputProps: { 'aria-label': 'description', maxLength: 100 }
         };
 
@@ -40,12 +40,6 @@ function Outline() {
 
     const handleRemoveRow = () => {
         setRows(rows.slice(0, -1));
-    };
-
-    const handleRemoveSpecificRow = (idx) => {
-        const newRows = [...rows]
-        newRows.splice(idx, 1)
-        setRows(newRows)
     };
 
     const handleSaveOpen = () => setSaveOpen(true);
@@ -138,42 +132,46 @@ function Outline() {
                     2. Learning Outcomes
                 </h2>
 
-                <table
-                    className="table table-bordered table-hover"
-                    id="tab_logic"
-                >
-                    <tbody>
-                        {rows.map((item, idx) => (
-                            <tr id="addr0" key={idx}>
-                                <td>
+                <TableContainer>
+                    <Table>
+                        <TableBody>
+                            {rows.map((item, idx) => (
+                                <TableRow id="addr0" key={idx}>
+                                    <TableCell align="left">
 
-                                    {idx + "  "}
+                                        {idx + "  "}
 
-                                    <Input
+                                    </TableCell>
 
-                                        id="standard-full-width"
-                                        placeholder="Enter Learning Objective"
-                                        //control the maximum learning outcome text length
-                                        inputProps={{ 'aria-label': 'description', maxLength: 100 }}
-                                        value={rows[idx].mobile}
+                                    <TableCell align="left">
 
-                                    />
+                                        <Input
 
-                                </td>
-                                <Button
-                                    className="btn btn-outline-danger btn-sm"
-                                    color="secondary"
-                                    onClick={(e) => handleRemoveSpecificRow(idx)}
-                                >
-                                    Remove
-                                </Button>
-                                <td>
+                                            id="standard-full-width"
+                                            placeholder="Enter Learning Outcome"
+                                            //control the maximum learning outcome text length
+                                            inputProps={{ 'aria-label': 'description', maxLength: 100 }}
+                                            value={rows[idx].mobile}
+                                            fullWidth={true}
 
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+
+                                        />
+
+                                    </TableCell>
+
+
+                                </TableRow>
+                            ))}
+
+                        </TableBody>
+
+                    </Table>
+
+                </TableContainer>
+
+
+
+
 
                 <Button
                     onClick={(e) => handleAddRow()}
