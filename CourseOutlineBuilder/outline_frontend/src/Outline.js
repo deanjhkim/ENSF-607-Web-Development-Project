@@ -22,19 +22,31 @@ function Outline() {
 
     const [courseCredits, setCourseCredits] = useState("");
 
-    const handleAddRow = () => {
-        return (0
-        );
-    };
-
-    const handleRemoveRow = () => {
-        return (0
-        );
-    };
-
     const [calendarRef, setCalendarRef] = useState("");
 
     const [examInfo, setExamInfo] = useState("");
+
+    const [rows, setRows] = useState([{}]);
+
+    const handleAddRow = () => {
+        const item = {
+            id: "standard-full-width",
+            placeholder: "Enter Learning Objective",
+            inputProps: { 'aria-label': 'description', maxLength: 100 }
+        };
+
+        setRows([...rows, item]);
+    };
+
+    const handleRemoveRow = () => {
+        setRows(rows.slice(0, -1));
+    };
+
+    const handleRemoveSpecificRow = (idx) => {
+        const newRows = [...rows]
+        newRows.splice(idx, 1)
+        setRows(newRows)
+    };
 
     const handleSaveOpen = () => setSaveOpen(true);
 
@@ -42,7 +54,7 @@ function Outline() {
 
     const [open, setSaveOpen] = useState(false);
 
-    function CreateSaveDialog({ open, handleSaveClose}) {
+    function CreateSaveDialog({ open, handleSaveClose }) {
         return (
             <Dialog open={open}>
                 <DialogTitle>
@@ -125,6 +137,43 @@ function Outline() {
                 <h2>
                     2. Learning Outcomes
                 </h2>
+
+                <table
+                    className="table table-bordered table-hover"
+                    id="tab_logic"
+                >
+                    <tbody>
+                        {rows.map((item, idx) => (
+                            <tr id="addr0" key={idx}>
+                                <td>
+
+                                    {idx + "  "}
+
+                                    <Input
+
+                                        id="standard-full-width"
+                                        placeholder="Enter Learning Objective"
+                                        //control the maximum learning outcome text length
+                                        inputProps={{ 'aria-label': 'description', maxLength: 100 }}
+                                        value={rows[idx].mobile}
+
+                                    />
+
+                                </td>
+                                <Button
+                                    className="btn btn-outline-danger btn-sm"
+                                    color="secondary"
+                                    onClick={(e) => handleRemoveSpecificRow(idx)}
+                                >
+                                    Remove
+                                </Button>
+                                <td>
+
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
                 <Button
                     onClick={(e) => handleAddRow()}
