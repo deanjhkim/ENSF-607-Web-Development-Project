@@ -12,11 +12,35 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
-import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Divider } from '@material-ui/core';
+
+
+function CreateSaveDialog({ open, handleSaveClose }) {
+    return (
+        <Dialog open={open}>
+            <DialogTitle>
+                Outline Created
+        </DialogTitle>
+            <DialogContent>
+                <Box>
+                    <body>
+                        This is a dummy button to demonstrate that the inputs will be recorded into a database.
+            </body>
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleSaveClose} color="primary">
+                    Cancel
+                 </Button>
+            </DialogActions>
+        </Dialog>
+    );
+}
+
 
 function Outline(props) {
 
-    const {faculty, number, term, section, description} = props;
+    const { faculty, number, term, section, description } = props;
 
     const [courseDesc, setCourseDesc] = useState("");
 
@@ -75,7 +99,7 @@ function Outline(props) {
     };
     const updateSum = () => {
         let total = 0;
-        for (let i = 0; i<gradeRows.length; i++) {
+        for (let i = 0; i < gradeRows.length; i++) {
             console.log(parseInt(gradeRows[i]["three"]));
             total += parseInt(gradeRows[i]["three"]);
         };
@@ -83,7 +107,7 @@ function Outline(props) {
     };
 
 
-    
+
 
     const handleSaveOpen = () => setSaveOpen(true);
 
@@ -91,229 +115,218 @@ function Outline(props) {
 
     const [open, setSaveOpen] = useState(false);
 
-    function CreateSaveDialog({ open, handleSaveClose }) {
-        return (
-            <Dialog open={open}>
-                <DialogTitle>
-                    Outline Created
-            </DialogTitle>
-                <DialogContent>
-                    <Box>
-                        <body>
-                            This is a dummy button to demonstrate that the inputs will be recorded into a database.
-                </body>
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleSaveClose} color="primary">
-                        Cancel
-                     </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
+
 
     return (
-        <div className="Outline">
-            <h1>
-                Outline
+        <Box paddingLeft={2}>
+            <div className="Outline">
+                <h1>
+                    Outline
             </h1>
 
-            <Box width={1 / 2}>
-                <h2>
-                    1. Calendar Information
+                <Box width={1 / 2}>
+                    <h2>
+                        1. Calendar Information
                 </h2>
 
-                <h3>
-                    Course Description
+                    <h3>
+                        Course Description
                 </h3>
 
-                <TextField
-                    multiline={true}
-                    rows={12}
-                    rowsMax={12}
-                    fullWidth={true}
-                    placeholder="Enter Course Description"
-                    onChange={(e) => setCourseDesc(e.target.value)}
-                />
+                    <TextField
+                        multiline={true}
+                        rows={12}
+                        rowsMax={12}
+                        fullWidth={true}
+                        placeholder="Enter Course Description"
+                        onChange={(e) => setCourseDesc(e.target.value)}
+                    />
 
-                <h3>
-                    Course Hours
+                    <h3>
+                        Course Hours
                 </h3>
 
-                <TextField
-                    multiline={true}
-                    placeholder="Enter Course Hours"
-                    onChange={(e) => setCourseHours(e.target.value)}
-                />
+                    <TextField
+                        multiline={true}
+                        placeholder="Enter Course Hours"
+                        onChange={(e) => setCourseHours(e.target.value)}
+                    />
 
-                <h3>
-                    Academic Credit
+                    <h3>
+                        Academic Credit
                 </h3>
 
-                <TextField
-                    multiline={true}
-                    placeholder="Enter Number of Credits"
-                    onChange={(e) => setCourseCredits(e.target.value)}
-                />
+                    <TextField
+                        multiline={true}
+                        placeholder="Enter Number of Credits"
+                        onChange={(e) => setCourseCredits(e.target.value)}
+                    />
 
-                <h3>
-                    Calendar Reference
+                    <h3>
+                        Calendar Reference
                 </h3>
 
-                <TextField
-                    multiline={true}
-                    fullWidth={true}
-                    placeholder="Enter Calendar Reference URL"
-                    onChange={(e) => setCalendarRef(e.target.value)}
-                />
+                    <TextField
+                        multiline={true}
+                        fullWidth={true}
+                        placeholder="Enter Calendar Reference URL"
+                        onChange={(e) => setCalendarRef(e.target.value)}
+                    />
 
-            </Box>
+                </Box>
 
-            <Box width={1 / 2}>
-                <h2>
-                    2. Learning Outcomes
+                <Box width={1 / 2}>
+                    <h2>
+                        2. Learning Outcomes
                 </h2>
 
-                <TableContainer>
-                    <Table>
-                        <TableBody>
-                            {outcomeRows.map((item, idx) => (
-                                <TableRow id="addr0" key={idx}>
-                                    <TableCell align="left">
+                    <TableContainer>
+                        <Table>
+                            <TableBody>
+                                {outcomeRows.map((item, idx) => (
+                                    <TableRow id="addr0" key={idx}>
+                                        <TableCell align="left">
 
-                                        {idx + "  "}
+                                            {idx + "  "}
 
-                                    </TableCell>
+                                        </TableCell>
 
-                                    <TableCell align="left">
+                                        <TableCell align="left">
 
-                                        <Input
+                                            <Input
 
-                                            id="standard-full-width"
-                                            placeholder="Enter Learning Outcome"
-                                            //control the maximum learning outcome text length
-                                            inputProps={{ 'aria-label': 'description', maxLength: 100 }}
-                                            value={outcomeRows[idx].mobile}
-                                            fullWidth={true}
-
-
-                                        />
-
-                                    </TableCell>
+                                                id="standard-full-width"
+                                                placeholder="Enter Learning Outcome"
+                                                //control the maximum learning outcome text length
+                                                inputProps={{ 'aria-label': 'description', maxLength: 100 }}
+                                                value={outcomeRows[idx].mobile}
+                                                fullWidth={true}
 
 
-                                </TableRow>
-                            ))}
+                                            />
 
-                        </TableBody>
-
-                    </Table>
-
-                </TableContainer>
+                                        </TableCell>
 
 
+                                    </TableRow>
+                                ))}
+
+                            </TableBody>
+
+                        </Table>
+
+                    </TableContainer>
 
 
 
-                <Button
-                    onClick={(e) => handleAddRow()}
-                    className="btn btn-primary"
-                    variant="contained"
-                    color="primary"
-                >
-                    Add Learning Outcome
+
+
+                    <Button
+                        onClick={(e) => handleAddRow()}
+                        className="btn btn-primary"
+                        variant="contained"
+                        color="primary"
+                    >
+                        Add Row
               </Button>
-                <Button
-                    onClick={(e) => handleRemoveRow()}
-                    variant="contained"
-                    color="secondary"
-                    className="btn btn-danger float-right"
-                >
-                    Delete Learning Outcome
+                    <Button
+                        onClick={(e) => handleRemoveRow()}
+                        variant="contained"
+                        color="secondary"
+                        className="btn btn-danger float-right"
+                    >
+                        Delete Row
               </Button>
 
-            </Box>
+                </Box>
 
-            <Box width={1 / 2}>
-                <h2>
-                    5. Examinations
+                <Box width={1 / 2}>
+                    <h2>
+                        5. Examinations
                 </h2>
 
-                <h3>
-                    Examination Information
+                    <h3>
+                        Examination Information
                 </h3>
 
-                <TextField
-                    multiline={true}
-                    rows={12}
-                    rowsMax={12}
-                    fullWidth={true}
-                    placeholder="Enter Examination Information"
-                    onChange={(e) => setExamInfo(e.target.value)}
-                />
+                    <TextField
+                        multiline={true}
+                        rows={12}
+                        rowsMax={12}
+                        fullWidth={true}
+                        placeholder="Enter Examination Information"
+                        onChange={(e) => setExamInfo(e.target.value)}
+                    />
 
-            </Box>
+                </Box>
 
-            <Box width={1 / 2}>
-                <h2>
-                    7. Final Grade Determination
+                <Box width={1 / 2}>
+                    <h2>
+                        7. Final Grade Determination
                 </h2>
 
-                <div>
-            <TableContainer>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Component</TableCell>
-                            <TableCell>Learning Outcomes Evaluated</TableCell>
-                            <TableCell>Weight</TableCell>
-                            <TableCell> </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {gradeRows.map((row, index) => (
-                            <TableRow key={index}>
-                                <TableCell align="left"><TextField defaultValue={row.one}
-                                    onChange={(e) => setValue(index, 'one', e.target.value)} /></TableCell>
-                                <TableCell align="left"><TextField defaultValue={row.two}
-                                    onChange={(e) => setValue(index, 'two', e.target.value)} /></TableCell>
-                                <TableCell align="left"><TextField defaultValue={row.three}
-                                    onChange={(e) => setValue(index, 'three', e.target.value)} /></TableCell>
-                                <TableCell align="left"><Button onClick={(e) => deleteRow(index)}>Delete</Button></TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <div>
-                <Button onClick={addRow}>
-                    Create Row
+                    <div>
+                        <TableContainer>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Component</TableCell>
+                                        <TableCell>Learning Outcomes Evaluated</TableCell>
+                                        <TableCell>Weight</TableCell>
+                                        <TableCell> </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {gradeRows.map((row, index) => (
+                                        <TableRow key={index}>
+                                            <TableCell align="left"><TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Component' /></TableCell>
+                                            <TableCell align="left"><TextField defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Outcomes'/></TableCell>
+                                            <TableCell align="left"><TextField defaultValue={row.three}
+                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Weight'/></TableCell>
+                                            <TableCell align="left">
+                                                <Button variant='contained' color='secondary' onClick={(e) => deleteRow(index)}>Delete
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                    <TableRow>
+                                        <TableCell align="left"></TableCell>
+                                        <TableCell align="right">Total Weight:</TableCell>
+                                        <TableCell align="left">{sum}</TableCell>
+                                        <TableCell align="left"></TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
+                        <br />
+
+                        <div>
+                            <Button onClick={addRow} variant='contained' color='primary'>
+                                Create Row
+                            </Button>
+                        </div>
+                    </div>
+                </Box>
+
+                <br />
+
+                <Divider />
+
+                <Box width={1 / 2} paddingTop={5}>
+                    <Button variant="contained" color="primary" onClick={handleSaveOpen}>
+                        Save
                 </Button>
+                </Box>
+
+                <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
             </div>
-            <div>
-                <Box>Grade Total: {sum}</Box>
-            </div>
-        </div>
+            <br />
+        </Box>
 
-
-            </Box>
-
-            
-
-
-            <Box width={1 / 2}>
-                <Button variant="contained" color="primary" onClick={handleSaveOpen}>
-                    Save
-                </Button>
-            </Box>
-
-            <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
-
-
-        </div>
     );
 }
-
 
 export default Outline;
