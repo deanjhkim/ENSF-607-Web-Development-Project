@@ -14,7 +14,9 @@ import Paper from '@material-ui/core/Paper';
 
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 
-function Outline() {
+function Outline(props) {
+
+    const {faculty, number, term, section, description} = props;
 
     const [courseDesc, setCourseDesc] = useState("");
 
