@@ -28,7 +28,9 @@ function Outline(props) {
 
     const [examInfo, setExamInfo] = useState("");
 
-    const [rows, setRows] = useState([{}]);
+    // Rows for Section 2
+
+    const [outcomeRows, setOutcomeRows] = useState([{}]);
 
     const handleAddRow = () => {
         const item = {
@@ -37,12 +39,51 @@ function Outline(props) {
             inputProps: { 'aria-label': 'description', maxLength: 100 }
         };
 
-        setRows([...rows, item]);
+        setOutcomeRows([...outcomeRows, item]);
     };
 
     const handleRemoveRow = () => {
-        setRows(rows.slice(0, -1));
+        setOutcomeRows(outcomeRows.slice(0, -1));
     };
+
+
+    // Rows for section 7
+
+    const createRow = (one, two, three) => {
+        return { one, two, three };
+    };
+    const [gradeRows, setGradeRows] = useState([createRow("", "", "")]);
+    const [sum, setSum] = useState(0);
+    const setValue = (index, column, value) => {
+        let newRows = gradeRows;
+        newRows[index][column] = value;
+        setGradeRows(newRows);
+        console.log(gradeRows);
+        updateSum();
+    };
+    const deleteRow = (index) => {
+        console.log(index)
+        console.log(gradeRows)
+        if (index > 0) {
+            setGradeRows(gradeRows.splice(index, 1))
+        }
+        console.log(gradeRows)
+    };
+    const addRow = () => {
+        setGradeRows(gradeRows.concat([createRow("", "", "")]));
+        console.log(gradeRows)
+    };
+    const updateSum = () => {
+        let total = 0;
+        for (let i = 0; i<gradeRows.length; i++) {
+            console.log(parseInt(gradeRows[i]["three"]));
+            total += parseInt(gradeRows[i]["three"]);
+        };
+        setSum(total);
+    };
+
+
+    
 
     const handleSaveOpen = () => setSaveOpen(true);
 
@@ -137,7 +178,7 @@ function Outline(props) {
                 <TableContainer>
                     <Table>
                         <TableBody>
-                            {rows.map((item, idx) => (
+                            {outcomeRows.map((item, idx) => (
                                 <TableRow id="addr0" key={idx}>
                                     <TableCell align="left">
 
@@ -153,7 +194,7 @@ function Outline(props) {
                                             placeholder="Enter Learning Outcome"
                                             //control the maximum learning outcome text length
                                             inputProps={{ 'aria-label': 'description', maxLength: 100 }}
-                                            value={rows[idx].mobile}
+                                            value={outcomeRows[idx].mobile}
                                             fullWidth={true}
 
 
@@ -219,7 +260,46 @@ function Outline(props) {
                     7. Final Grade Determination
                 </h2>
 
+                <div>
+            <TableContainer>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Component</TableCell>
+                            <TableCell>Learning Outcomes Evaluated</TableCell>
+                            <TableCell>Weight</TableCell>
+                            <TableCell> </TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {gradeRows.map((row, index) => (
+                            <TableRow key={index}>
+                                <TableCell align="left"><TextField defaultValue={row.one}
+                                    onChange={(e) => setValue(index, 'one', e.target.value)} /></TableCell>
+                                <TableCell align="left"><TextField defaultValue={row.two}
+                                    onChange={(e) => setValue(index, 'two', e.target.value)} /></TableCell>
+                                <TableCell align="left"><TextField defaultValue={row.three}
+                                    onChange={(e) => setValue(index, 'three', e.target.value)} /></TableCell>
+                                <TableCell align="left"><Button onClick={(e) => deleteRow(index)}>Delete</Button></TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+            <div>
+                <Button onClick={addRow}>
+                    Create Row
+                </Button>
+            </div>
+            <div>
+                <Box>Grade Total: {sum}</Box>
+            </div>
+        </div>
+
+
             </Box>
+
+            
 
 
             <Box width={1 / 2}>
