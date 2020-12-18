@@ -105,7 +105,7 @@ function Outline() {
                 />
 
                 <h3>
-                    Calendar Reference
+                    Academic Credit
                 </h3>
 
                 <TextField
