@@ -4,6 +4,13 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'outlines', views.OutlineViewSet)
+router.register(r'calendarinformation', views.CalendarInformationViewSet)
+router.register(r'learningoutcomes', views.LearningOutcomeViewSet)
+router.register(r'graduateattributes', views.GraduateAttributeViewSet)
+router.register(r'examinations', views.ExaminationsViewSet)
+router.register(r'finalgradedeterminations', views.FinalGradeDeterminationViewSet)
+router.register(r'finalgradecomponents', views.FinalGradeComponentViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),
