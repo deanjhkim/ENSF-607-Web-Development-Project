@@ -312,9 +312,6 @@ function MenuBar({ handleSaveOpen }) {
                 </section>
             </Toolbar>
         </AppBar>
-
-
-
     );
 };
 

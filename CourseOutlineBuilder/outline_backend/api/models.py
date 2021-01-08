@@ -5,6 +5,7 @@ class Outline(models.Model):
     number = models.CharField(max_length=6)
     term = models.CharField(max_length=5)
     section = models.CharField(max_length=3)
+    description = models.CharField(max_length=50)
     date_created = models.CharField(max_length=10)
 
     def __str__(self):
