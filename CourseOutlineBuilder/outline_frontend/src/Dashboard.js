@@ -69,7 +69,7 @@ function OutlineTable(props) {
   );
 }
 
-function CreateFormDialog({ open, handleCreateClose, goToOutline }) {
+function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setOutlines }) {
 
   const [faculty, setFaculty] = useState("");
   const [facultyError, setFacultyError] = useState(false);
@@ -122,9 +122,37 @@ function CreateFormDialog({ open, handleCreateClose, goToOutline }) {
     } else return false;
   };
 
+  const postOutline = async (outline) => {
+    try {
+      axios.post('http://localhost:8000/outlines/', outline).then(response => {
+        console.log(`posted ${response.data} to backend`);
+      })
+    } catch(error){
+      console.log(error)
+    }
+  }
+
+  const addOutline = (outline) => {
+    let _outlines = [...outlines]
+    _outlines.push(outline)
+    setOutlines(_outlines)
+  }
+
   const handleCreate = () => {
+    
     checkFields();
-    goToOutline();
+
+    const today = new Date();
+    const day = ("0" + (today.getDate())).slice(-2);
+    const month = ("0" + (today.getMonth() + 1)).slice(-2);
+    const year = today.getFullYear();
+    const date = `${year}-${month}-${day}`;
+
+    const outline = {faculty: faculty, number: number, term: term, section: section, description: description, date_created: date}
+    addOutline(outline)
+    postOutline(outline);
+    handleCreateClose();
+    // goToOutline();
     if (filledFields()) {
 
     }
@@ -193,7 +221,7 @@ function MenuBar(props) {
   const classes = useStyles()
 
   return (
-    <AppBar Position='static'>
+    <AppBar position='static'>
       <Toolbar>
         <Box paddingLeft={2}>
           <h1>
@@ -250,7 +278,9 @@ function Dashboard() {
 
   const handleDelete = () => {
     deleteOutline(outlines[itemSelected].url)
-    setOutlines(outlines.splice(itemSelected, 1))
+    let _outlines = [...outlines];
+    _outlines.splice(itemSelected, 1);
+    setOutlines(_outlines);
   }
 
   const handleOpen = () => {
@@ -276,7 +306,7 @@ function Dashboard() {
       <Box paddingTop={20}>
         <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
       </Box>
-      <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} />
+      <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} />
 
     </div >
 
