@@ -30,7 +30,7 @@ function Outline(props) {
 
     const classes = useStyles;
 
-    const { outlineUrl } = props;
+    const { faculty, number, term, section, description } = props;
 
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
@@ -43,13 +43,40 @@ function Outline(props) {
             <Grid container justify='center' >
                 <Grid item align='center'>
                     <Box component={Paper} align='left'>
+                        <br></br>
+                        <br></br>
+                        <br></br>
                         <h1>
-                            Outline
+                            University of Calgary Course Outline Builder
                         </h1>
-                        <CalendarInfo />
-                        <LearningOutcomes />
-                        <Examinations />
-                        <FinalGradeDetermination />
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CalendarInfo />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+
+                        <Box border={2} align='center'>
+                            <LearningOutcomes />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+
+                        <Box border={2} align='center'>
+                            <Examinations />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+
+                        <Box border={2} align='center'>
+                            <FinalGradeDetermination />
+                        </Box>
+                        <br></br>
+                        <br></br>
 
                         <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
                     </Box>
@@ -67,7 +94,7 @@ function CalendarInfo() {
     const [calendarRef, setCalendarRef] = useState("");
 
     return (
-        <Box>
+        <Box width="95%" align='left'>
             <h2>
                 1. Calendar Information
         </h2>
@@ -108,7 +135,11 @@ function CalendarInfo() {
                 fullWidth={true}
                 placeholder="Enter Calendar Reference URL"
                 onChange={(e) => setCalendarRef(e.target.value)}
+                border={1}
             />
+
+            <br></br>
+            <br></br>
         </Box>
     );
 };
@@ -127,12 +158,25 @@ function LearningOutcomes() {
         setOutcomeRows([...outcomeRows, item]);
     };
 
+    const deleteRow = (index) => {
+
+        //var before = outcomeRows.slice(0, index);
+        //var after = outcomeRows.slice(index + 1, outcomeRows.length);
+        //var total = before.concat(after);
+
+        let arr = [...outcomeRows];
+
+        arr.splice(index, 1);
+        setOutcomeRows(arr);
+
+    };
+
     const handleRemoveRow = () => {
         setOutcomeRows(outcomeRows.slice(0, -1));
     };
 
     return (
-        <Box>
+        <Box Box width="95%" align='left'>
             <h2>
                 2. Learning Outcomes
                 </h2>
@@ -159,6 +203,10 @@ function LearningOutcomes() {
                                         fullWidth={true}
                                     />
                                 </TableCell>
+                                <TableCell align="left">
+                                    <Button variant='contained' color='secondary' onClick={(e) => deleteRow(idx)}>Delete
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -180,6 +228,8 @@ function LearningOutcomes() {
             >
                 Delete Row
               </Button>
+            <br></br>
+            <br></br>
         </Box>
     );
 };
@@ -189,7 +239,7 @@ function Examinations() {
     const [examInfo, setExamInfo] = useState("");
 
     return (
-        <Box width={1 / 2}>
+        <Box Box width="95%" align='left'>
             <h2>
                 5. Examinations
                 </h2>
@@ -204,6 +254,8 @@ function Examinations() {
                 placeholder="Enter Examination Information"
                 onChange={(e) => setExamInfo(e.target.value)}
             />
+            <br></br>
+            <br></br>
         </Box>
     );
 
@@ -226,8 +278,13 @@ function FinalGradeDetermination() {
     const deleteRow = (index) => {
         console.log(index)
         console.log(gradeRows)
+
+        let arr = [...gradeRows]
+
+        arr.splice(index, 1)
+
         if (index > 0) {
-            setGradeRows(gradeRows.splice(index, 1))
+            setGradeRows(arr)
         }
         console.log(gradeRows)
     };
@@ -245,7 +302,7 @@ function FinalGradeDetermination() {
     };
 
     return (
-        <Box>
+        <Box Box width="95%" align='left'>
             <h2>
                 7. Final Grade Determination
             </h2>
@@ -294,6 +351,9 @@ function FinalGradeDetermination() {
                             </Button>
                 </div>
             </div>
+
+            <br></br>
+            <br></br>
         </Box>
     );
 
@@ -312,6 +372,9 @@ function MenuBar({ handleSaveOpen }) {
                 </section>
             </Toolbar>
         </AppBar>
+
+
+
     );
 };
 
