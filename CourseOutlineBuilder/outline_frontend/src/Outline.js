@@ -30,7 +30,7 @@ function Outline(props) {
 
     const classes = useStyles;
 
-    const { faculty, number, term, section, description } = props;
+    const { outlineUrl } = props;
 
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
