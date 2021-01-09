@@ -8,7 +8,15 @@ import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/
 import { makeStyles } from '@material-ui/core'
 import Outline from './Outline'
 import { Link, Redirect, Route, useHistory } from 'react-router-dom';
-import { Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core';
+import axios from 'axios';
+import { AppBar, Toolbar } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  toolbarButtons: {
+    marginLeft: 'auto',
+  },
+})
 
 function OutlineTable(props) {
 
@@ -18,7 +26,9 @@ function OutlineTable(props) {
     if (itemSelected === index) {
       setItemSelected(null);
     }
-    else setItemSelected(index);
+    else {
+      setItemSelected(index);
+    }
   };
 
   let isSelected = (index) => itemSelected === index;
@@ -50,7 +60,7 @@ function OutlineTable(props) {
               <TableCell align="left">{row.term}</TableCell>
               <TableCell align="left">{row.section}</TableCell>
               <TableCell align="left">{row.description}</TableCell>
-              <TableCell align="left">{row.dateCreated}</TableCell>
+              <TableCell align="left">{row.date_created}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -59,9 +69,7 @@ function OutlineTable(props) {
   );
 }
 
-function CreateFormDialog({ open, handleCreateClose }) {
-
-  const history = useHistory();
+function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setOutlines }) {
 
   const [faculty, setFaculty] = useState("");
   const [facultyError, setFacultyError] = useState(false);
@@ -114,18 +122,40 @@ function CreateFormDialog({ open, handleCreateClose }) {
     } else return false;
   };
 
-  const handleCreate = () => {
-    checkFields();
-    goToOutline();
-    if (filledFields()) {
-      
+  const postOutline = async (outline) => {
+    try {
+      axios.post('http://localhost:8000/outlines/', outline).then(response => {
+        console.log(`posted ${response.data} to backend`);
+      })
+    } catch(error){
+      console.log(error)
     }
   }
 
-  const goToOutline = () => {
-    <Route path='/outlineApp' component={Outline}
-      render={(props) => (<Outline {...props} faculty={faculty} number={number} term={term} section={section} description={description} />)} />
-    history.push('/outlineApp');
+  const addOutline = (outline) => {
+    let _outlines = [...outlines]
+    _outlines.push(outline)
+    setOutlines(_outlines)
+  }
+
+  const handleCreate = () => {
+    
+    checkFields();
+
+    const today = new Date();
+    const day = ("0" + (today.getDate())).slice(-2);
+    const month = ("0" + (today.getMonth() + 1)).slice(-2);
+    const year = today.getFullYear();
+    const date = `${year}-${month}-${day}`;
+
+    const outline = {faculty: faculty, number: number, term: term, section: section, description: description, date_created: date}
+    addOutline(outline)
+    postOutline(outline);
+    handleCreateClose();
+    // goToOutline();
+    if (filledFields()) {
+
+    }
   }
 
   const displayErrors = () => {
@@ -144,8 +174,6 @@ function CreateFormDialog({ open, handleCreateClose }) {
     console.log(description);
   }
 
-  const updateValues = () => {
-  }
   return (
     <Dialog open={open}>
       <DialogTitle>
@@ -186,53 +214,103 @@ function CreateFormDialog({ open, handleCreateClose }) {
   );
 }
 
+function MenuBar(props) {
+
+  const { handleCreateOpen, handleOpen, handleDelete } = props
+
+  const classes = useStyles()
+
+  return (
+    <AppBar position='static'>
+      <Toolbar>
+        <Box paddingLeft={2}>
+          <h1>
+            Course Outline Builder
+        </h1>
+        </Box>
+        <Box paddingRight={5} className={classes.toolbarButtons}>
+          <ButtonGroup variant="contained" color="secondary" aria-label="outlined primary button group">
+            <Button onClick={handleCreateOpen}>Create </Button>
+            <Button onClick={handleOpen}>Open </Button>
+            <Button onClick={handleDelete}>Delete</Button>
+          </ButtonGroup>
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+
 function Dashboard() {
 
-  function createOutline(faculty, number, term, section, description, dateCreated) {
-    return { faculty, number, term, section, description, dateCreated };
-  }
-
-  const outlines =
-    [createOutline('ENSF', '607', 'W2020', 'LO1', 'Software Design and Architecture I', '2020-06-12'),
-    createOutline('ENSF', '608', 'F2020', 'LO1', 'Software Design and Architecture II', '2020-08-11')]
-
-  const handleCreateOpen = () => setCreateOpen(true);
-
-  const handleCreateClose = () => setCreateOpen(false);
+  const [outlines, setOutlines] = useState([])
 
   const [open, setCreateOpen] = useState(false);
 
   const [itemSelected, setItemSelected] = useState();
 
+  useEffect(() => {
+    console.log('loading outlines from backend...')
+    getOutlines();
+
+  }, [])
+
+  const getOutlines = async () => {
+    try {
+      axios.get('http://localhost:8000/outlines/')
+        .then((response) => setOutlines(response.data));
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const deleteOutline = async (url) => {
+    try {
+      axios.delete(url)
+      console.log(`deleted ${url} from backend`)
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  const handleCreateOpen = () => setCreateOpen(true);
+
+  const handleCreateClose = () => setCreateOpen(false);
+
+  const handleDelete = () => {
+    deleteOutline(outlines[itemSelected].url)
+    let _outlines = [...outlines];
+    _outlines.splice(itemSelected, 1);
+    setOutlines(_outlines);
+  }
+
+  const handleOpen = () => {
+    if (itemSelected >= 0 && itemSelected < outlines.length) {
+      const url = outlines[itemSelected].url
+      console.log(`opening ${url} ...`)
+      goToOutline(url)
+    }
+  }
+
+  const history = useHistory();
+
+  const goToOutline = (url) => {
+    <Route path='/outline' component={Outline}
+      render={(props) => (<Outline {...props} url={url} />)} />
+    history.push('/outline');
+  }
+
   return (
     <div className="Dashboard">
-      <Box paddingLeft={2}>
-        <h1>
-          Course Outline Builder
-        </h1>
+
+      <MenuBar handleCreateOpen={handleCreateOpen} handleOpen={handleOpen} handleDelete={handleDelete} />
+      <Box paddingTop={20}>
+        <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
       </Box>
+      <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} />
 
-      <Box paddingLeft={2}>
-        <ButtonGroup color="primary" aria-label="outlined primary button group">
-          <Button onClick={handleCreateOpen}>Create </Button>
-          <Button>Open </Button>
-          <Button>Delete </Button>
-        </ButtonGroup>
-      </Box>
-
-      <Box paddingTop={2}>
-        <Divider />
-      </Box>
-
-      <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
-
-
-      <CreateFormDialog open={open} handleCreateClose={handleCreateClose} />
-
-    </div>
+    </div >
 
   );
 }
-
 
 export default Dashboard;
