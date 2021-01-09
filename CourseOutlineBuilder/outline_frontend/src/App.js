@@ -14,7 +14,7 @@ function App() {
       <div className="App">
         <div>
           <Switch>
-            <Route path='/outlineApp' component={Outline}/>
+            <Route path='/outline' component={Outline}/>
             <Route path='/' exact component={Dashboard} />
           </Switch>
         </div>
