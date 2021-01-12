@@ -15,6 +15,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Divider, makeStyles } from '@material-ui/core';
+import CloseIcon from "@material-ui/icons/Close";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import CheckIcon from "@material-ui/icons/Check";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 export default Outline;
 
@@ -146,88 +152,146 @@ function CalendarInfo() {
 
 function LearningOutcomes() {
 
-    const [outcomeRows, setOutcomeRows] = useState([{}]);
-
-    const handleAddRow = () => {
-        const item = {
-            id: "standard-full-width",
-            placeholder: "Enter Learning Outcome",
-            inputProps: { 'aria-label': 'description', maxLength: 100 }
-        };
-
-        setOutcomeRows([...outcomeRows, item]);
+    const createRow = (one, two, three) => {
+        return { one, two, three };
     };
-
+    const [tableRows, setTableRows] = useState([createRow("", "", "")]);
+    const setValue = (index, column, value) => {
+        let newRows = tableRows;
+        newRows[index][column] = value;
+        setTableRows(newRows);
+        console.log(tableRows);
+    };
     const deleteRow = (index) => {
+        console.log(index)
+        console.log(tableRows)
 
-        //var before = outcomeRows.slice(0, index);
-        //var after = outcomeRows.slice(index + 1, outcomeRows.length);
-        //var total = before.concat(after);
+        let arr = [...tableRows]
 
-        let arr = [...outcomeRows];
+        arr.splice(index, 1)
 
-        arr.splice(index, 1);
-        setOutcomeRows(arr);
+        setTableRows(arr)
+
+        console.log(tableRows)
 
     };
-
-    const handleRemoveRow = () => {
-        setOutcomeRows(outcomeRows.slice(0, -1));
+    const addRow = () => {
+        setTableRows(tableRows.concat([createRow("", "", "")]));
+        console.log(tableRows)
+    };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
     };
 
     return (
         <Box Box width="95%" align='left'>
             <h2>
                 2. Learning Outcomes
-                </h2>
-            <TableContainer>
-                <Table>
-                    <TableBody>
-                        {outcomeRows.map((item, idx) => (
-                            <TableRow id="addr0" key={idx}>
-                                <TableCell align="left">
+            </h2>
 
-                                    {idx + "  "}
+            <div>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>#</TableCell>
+                                <TableCell>Learning Outcome</TableCell>
+                                <TableCell>Grade Attribute</TableCell>
+                                <TableCell>Instruction Level</TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
 
-                                </TableCell>
-
-                                <TableCell align="left">
-
-                                    <Input
-
-                                        id="standard-full-width"
-                                        placeholder="Enter Learning Outcome"
-                                        //control the maximum learning outcome text length
-                                        inputProps={{ 'aria-label': 'description', maxLength: 100 }}
-                                        value={outcomeRows[idx].mobile}
-                                        fullWidth={true}
-                                    />
-                                </TableCell>
-                                <TableCell align="left">
-                                    <Button variant='contained' color='secondary' onClick={(e) => deleteRow(idx)}>Delete
-                                    </Button>
-                                </TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Button
-                onClick={(e) => handleAddRow()}
-                className="btn btn-primary"
-                variant="contained"
-                color="primary"
-            >
-                Add Row
-              </Button>
-            <Button
-                onClick={(e) => handleRemoveRow()}
-                variant="contained"
-                color="secondary"
-                className="btn btn-danger float-right"
-            >
-                Delete Row
-              </Button>
+                        </TableHead>
+                        <TableBody>
+                            {tableRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    <TableCell align="left">
+                                        {index + "  "}
+                                    </TableCell>
+
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Learning Outcome' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <Select
+                                                defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} >
+                                                <MenuItem value="">
+                                                    <em>None</em>
+                                                </MenuItem>
+                                                <MenuItem value={"A1"}>A1</MenuItem>
+                                                <MenuItem value={"A2"}>A2</MenuItem>
+                                                <MenuItem value={"A3"}>A3</MenuItem>
+                                                <MenuItem value={"A4"}>A4</MenuItem>
+                                                <MenuItem value={"A5"}>A5</MenuItem>
+                                                <MenuItem value={"A6"}>A6</MenuItem>
+                                                <MenuItem value={"A7"}>A7</MenuItem>
+                                                <MenuItem value={"A8"}>A8</MenuItem>
+                                                <MenuItem value={"A9"}>A9</MenuItem>
+                                                <MenuItem value={"A10"}>A10</MenuItem>
+                                                <MenuItem value={"A11"}>A11</MenuItem>
+                                                <MenuItem value={"A12"}>A12</MenuItem>
+                                            </Select>
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.two}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                           <Select
+                                                defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} >
+                                                <MenuItem value="">
+                                                    <em>None</em>
+                                                </MenuItem>
+                                                <MenuItem value={"I"}>I</MenuItem>
+                                                <MenuItem value={"D"}>D</MenuItem>
+                                                <MenuItem value={"A"}>A</MenuItem>
+                                            </Select>
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.three}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <br />
+
+                <div>
+                    <Button onClick={addRow} variant='contained' color='primary'>
+                        Create Row
+                            </Button>
+                </div>
+            </div>
+
             <br></br>
             <br></br>
         </Box>
@@ -266,40 +330,65 @@ function FinalGradeDetermination() {
     const createRow = (one, two, three) => {
         return { one, two, three };
     };
-    const [gradeRows, setGradeRows] = useState([createRow("", "", "")]);
+    const [tableRows, setTableRows] = useState([createRow("", "", "")]);
     const [sum, setSum] = useState(0);
     const setValue = (index, column, value) => {
-        let newRows = gradeRows;
+        let newRows = tableRows;
         newRows[index][column] = value;
-        setGradeRows(newRows);
-        console.log(gradeRows);
+        setTableRows(newRows);
+        console.log(tableRows);
         updateSum();
     };
     const deleteRow = (index) => {
         console.log(index)
-        console.log(gradeRows)
+        console.log(tableRows)
 
-        let arr = [...gradeRows]
+        let arr = [...tableRows]
 
         arr.splice(index, 1)
 
-        if (index > 0) {
-            setGradeRows(arr)
-        }
-        console.log(gradeRows)
+        setTableRows(arr)
+
+        console.log(tableRows)
+
+        let total = 0;
+        for (let i = 0; i < arr.length; i++) {
+            console.log(parseInt(arr[i]["three"]));
+            let n = parseInt(arr[i]["three"])
+            {
+                Number.isInteger(n) ?
+                    (total += n) :
+                    (total += 0)
+            }
+        };
+        setSum(total);
+
     };
     const addRow = () => {
-        setGradeRows(gradeRows.concat([createRow("", "", "")]));
-        console.log(gradeRows)
+        setTableRows(tableRows.concat([createRow("", "", "")]));
+        console.log(tableRows)
     };
     const updateSum = () => {
         let total = 0;
-        for (let i = 0; i < gradeRows.length; i++) {
-            console.log(parseInt(gradeRows[i]["three"]));
-            total += parseInt(gradeRows[i]["three"]);
+        for (let i = 0; i < tableRows.length; i++) {
+            console.log(parseInt(tableRows[i]["three"]));
+            let n = parseInt(tableRows[i]["three"])
+            {
+                Number.isInteger(n) ?
+                    (total += n) :
+                    (total += 0)
+            }
         };
         setSum(total);
     };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
+    };
+
 
     return (
         <Box Box width="95%" align='left'>
@@ -315,21 +404,51 @@ function FinalGradeDetermination() {
                                 <TableCell>Component</TableCell>
                                 <TableCell>Learning Outcomes Evaluated</TableCell>
                                 <TableCell>Weight</TableCell>
-                                <TableCell> </TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
+
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {gradeRows.map((row, index) => (
+                            {tableRows.map((row, index) => (
                                 <TableRow key={index}>
-                                    <TableCell align="left"><TextField defaultValue={row.one}
-                                        onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Component' /></TableCell>
-                                    <TableCell align="left"><TextField defaultValue={row.two}
-                                        onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Outcomes' /></TableCell>
-                                    <TableCell align="left"><TextField defaultValue={row.three}
-                                        onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Weight' /></TableCell>
-                                    <TableCell align="left">
-                                        <Button variant='contained' color='secondary' onClick={(e) => deleteRow(index)}>Delete
-                                                </Button>
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Component' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Outcomes' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.two}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.three}
+                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Weight' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.three}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
                                     </TableCell>
                                 </TableRow>
                             ))}
