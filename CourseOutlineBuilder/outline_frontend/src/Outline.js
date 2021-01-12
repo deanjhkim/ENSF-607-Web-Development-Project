@@ -15,6 +15,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid'
 import { Dialog, DialogTitle, DialogContent, DialogActions, Divider, makeStyles } from '@material-ui/core';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import Dashboard from './Dashboard'
+import { useLocation } from 'react-router';
 
 export default Outline;
 
@@ -26,18 +29,23 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+
+
 function Outline(props) {
 
     const classes = useStyles;
 
-    const { outlineUrl } = props;
+    const { url } = props;
 
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
     const [open, setSaveOpen] = useState(false);
 
+   
+    
+    
     return (
-
+        
         <div className="Outline">
             <MenuBar handleSaveOpen={handleSaveOpen} />
             <Grid container justify='center' >
@@ -45,12 +53,15 @@ function Outline(props) {
                     <Box component={Paper} align='left'>
                         <h1>
                             Outline
+                          
                         </h1>
+                        
                         <CalendarInfo />
                         <LearningOutcomes />
                         <Examinations />
                         <FinalGradeDetermination />
-
+                        
+                       
                         <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
                     </Box>
                 </Grid>
@@ -59,17 +70,22 @@ function Outline(props) {
     );
 }
 
+
 function CalendarInfo() {
 
     const [courseDesc, setCourseDesc] = useState("");
     const [courseHours, setCourseHours] = useState("");
     const [courseCredits, setCourseCredits] = useState("");
     const [calendarRef, setCalendarRef] = useState("");
+    const location = useLocation();
 
     return (
         <Box>
             <h2>
                 1. Calendar Information
+                
+               
+                
         </h2>
             <h3>
                 Course Description
@@ -79,11 +95,11 @@ function CalendarInfo() {
                 rows={12}
                 rowsMax={12}
                 fullWidth={true}
-                placeholder="Enter Course Description"
+                placeholder={location.state.color}
                 onChange={(e) => setCourseDesc(e.target.value)}
             />
             <h3>
-                Course Hours
+                Course Hours 
                 </h3>
 
             <TextField
