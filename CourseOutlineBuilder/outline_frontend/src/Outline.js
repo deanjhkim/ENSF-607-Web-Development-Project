@@ -46,7 +46,7 @@ function Outline(props) {
 
         <div className="Outline">
             <MenuBar handleSaveOpen={handleSaveOpen} />
-            <Grid container justify='center' >
+            <Grid container justify='center'>
                 <Grid item align='center'>
                     <Box component={Paper} align='left'>
                         <br></br>
@@ -63,13 +63,23 @@ function Outline(props) {
                         <br></br>
                         <br></br>
 
-
                         <Box border={2} align='center'>
                             <LearningOutcomes />
                         </Box>
                         <br></br>
                         <br></br>
 
+                        <Box border={2} align='center'>
+                            <Timetable />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CourseInstructors />
+                        </Box>
+                        <br></br>
+                        <br></br>
 
                         <Box border={2} align='center'>
                             <Examinations />
@@ -77,9 +87,26 @@ function Outline(props) {
                         <br></br>
                         <br></br>
 
+                        <Box border={2} align='center'>
+                            <UseOfCalculators />
+                        </Box>
+                        <br></br>
+                        <br></br>
 
                         <Box border={2} align='center'>
                             <FinalGradeDetermination />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <Textbook />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CoursePolicies />
                         </Box>
                         <br></br>
                         <br></br>
@@ -249,7 +276,7 @@ function LearningOutcomes() {
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                           <Select
+                                            <Select
                                                 defaultValue={row.two}
                                                 onChange={(e) => setValue(index, 'two', e.target.value)} >
                                                 <MenuItem value="">
@@ -262,6 +289,280 @@ function LearningOutcomes() {
                                         </TableCell>) :
                                         (<TableCell>
                                             {row.three}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <br />
+
+                <div>
+                    <Button onClick={addRow} variant='contained' color='primary'>
+                        Create Row
+                            </Button>
+                </div>
+            </div>
+
+            <br></br>
+            <br></br>
+        </Box>
+    );
+};
+
+function Timetable() {
+
+    const createRow = (one, two, three, four) => {
+        return { one, two, three, four };
+    };
+    const [tableRows, setTableRows] = useState([createRow("", "", "", "")]);
+    const setValue = (index, column, value) => {
+        let newRows = tableRows;
+        newRows[index][column] = value;
+        setTableRows(newRows);
+        console.log(tableRows);
+    };
+    const deleteRow = (index) => {
+        console.log(index)
+        console.log(tableRows)
+
+        let arr = [...tableRows]
+
+        arr.splice(index, 1)
+
+        setTableRows(arr)
+
+        console.log(tableRows)
+
+    };
+    const addRow = () => {
+        setTableRows(tableRows.concat([createRow("", "", "", "")]));
+        console.log(tableRows)
+    };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
+    };
+
+    return (
+        <Box Box width="95%" align='left'>
+            <h2>
+                3. Timetable
+            </h2>
+
+            <div>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Section</TableCell>
+                                <TableCell>Day(s) of Week</TableCell>
+                                <TableCell>Time</TableCell>
+                                <TableCell>Location</TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {tableRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Section' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Day(s) of Week' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.two}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.three}
+                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Time' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.three}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.four}
+                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Location' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.four}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <br />
+
+                <div>
+                    <Button onClick={addRow} variant='contained' color='primary'>
+                        Create Row
+                            </Button>
+                </div>
+            </div>
+
+            <br></br>
+            <br></br>
+        </Box>
+    );
+};
+
+function CourseInstructors() {
+
+    const createRow = (one, two, three, four, five, six) => {
+        return { one, two, three, four, five, six };
+    };
+    const [tableRows, setTableRows] = useState([createRow("", "", "", "", "", "")]);
+    const setValue = (index, column, value) => {
+        let newRows = tableRows;
+        newRows[index][column] = value;
+        setTableRows(newRows);
+        console.log(tableRows);
+    };
+    const deleteRow = (index) => {
+        console.log(index)
+        console.log(tableRows)
+
+        let arr = [...tableRows]
+
+        arr.splice(index, 1)
+
+        setTableRows(arr)
+
+        console.log(tableRows)
+
+    };
+    const addRow = () => {
+        setTableRows(tableRows.concat([createRow("", "", "", "", "", "")]));
+        console.log(tableRows)
+    };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
+    };
+
+    return (
+        <Box Box width="95%" align='left'>
+            <h2>
+                4. Course Instructors
+            </h2>
+
+            <div>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Section</TableCell>
+                                <TableCell>First Name</TableCell>
+                                <TableCell>Family Name</TableCell>
+                                <TableCell>Phone</TableCell>
+                                <TableCell>Office</TableCell>
+                                <TableCell>Email</TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {tableRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Section' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter First Name' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.two}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.three}
+                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Family Name' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.three}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.four}
+                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Phone' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.four}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.five}
+                                                onChange={(e) => setValue(index, 'five', e.target.value)} placeholder='Enter Office' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.five}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.four}
+                                                onChange={(e) => setValue(index, 'six', e.target.value)} placeholder='Enter Email' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.six}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -323,6 +624,30 @@ function Examinations() {
         </Box>
     );
 
+};
+
+function UseOfCalculators() {
+
+    const [calculators, setCalculators] = useState("");
+
+    return (
+        <Box width="95%" align='left'>
+            <h2>
+                6. Use Of Calculators in Examinations
+        </h2>
+
+            <TextField
+
+                fullWidth={true}
+                placeholder="Enter Calculator Policy"
+                onChange={(e) => setCalculators(e.target.value)}
+                border={1}
+            />
+
+            <br></br>
+            <br></br>
+        </Box>
+    );
 };
 
 function FinalGradeDetermination() {
@@ -476,6 +801,254 @@ function FinalGradeDetermination() {
         </Box>
     );
 
+};
+
+function Textbook() {
+
+    const createRow = (one, two, three, four, five) => {
+        return { one, two, three, four, five };
+    };
+    const [tableRows, setTableRows] = useState([createRow("", "", "", "", "")]);
+    const setValue = (index, column, value) => {
+        let newRows = tableRows;
+        newRows[index][column] = value;
+        setTableRows(newRows);
+        console.log(tableRows);
+    };
+    const deleteRow = (index) => {
+        console.log(index)
+        console.log(tableRows)
+
+        let arr = [...tableRows]
+
+        arr.splice(index, 1)
+
+        setTableRows(arr)
+
+        console.log(tableRows)
+
+    };
+    const addRow = () => {
+        setTableRows(tableRows.concat([createRow("", "", "", "", "")]));
+        console.log(tableRows)
+    };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
+    };
+
+    return (
+        <Box Box width="95%" align='left'>
+            <h2>
+                8. Textbook
+            </h2>
+
+            <div>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Title</TableCell>
+                                <TableCell>Author</TableCell>
+                                <TableCell>Edition, Year</TableCell>
+                                <TableCell>Publisher</TableCell>
+                                <TableCell>Required/ Recommended</TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {tableRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Title' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.two}
+                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Author' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.two}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.three}
+                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Edition, Year' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.three}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.four}
+                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Publisher' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.four}
+                                        </TableCell>)}
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <Select
+                                                defaultValue={row.five}
+                                                onChange={(e) => setValue(index, 'five', e.target.value)} >
+                                                <MenuItem value="">
+                                                    <em>None</em>
+                                                </MenuItem>
+                                                <MenuItem value={"Required"}>Required</MenuItem>
+                                                <MenuItem value={"Recommended"}>Recommended</MenuItem>
+                                            </Select>
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.five}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <br />
+
+                <div>
+                    <Button onClick={addRow} variant='contained' color='primary'>
+                        Create Row
+                            </Button>
+                </div>
+            </div>
+
+            <br></br>
+            <br></br>
+        </Box>
+    );
+};
+
+function CoursePolicies() {
+
+    const createRow = (one) => {
+        return { one };
+    };
+    const [tableRows, setTableRows] = useState([createRow("")]);
+    const setValue = (index, column, value) => {
+        let newRows = tableRows;
+        newRows[index][column] = value;
+        setTableRows(newRows);
+        console.log(tableRows);
+    };
+    const deleteRow = (index) => {
+        console.log(index)
+        console.log(tableRows)
+
+        let arr = [...tableRows]
+
+        arr.splice(index, 1)
+
+        setTableRows(arr)
+
+        console.log(tableRows)
+
+    };
+    const addRow = () => {
+        setTableRows(tableRows.concat([createRow("")]));
+        console.log(tableRows)
+    };
+    const [editIdx, setEditIdx] = useState(-1);
+    const startEdit = idx => {
+        setEditIdx(idx);
+    };
+    const stopEdit = () => {
+        setEditIdx(-1);
+    };
+
+    return (
+        <Box Box width="95%" align='left'>
+            <h2>
+                9. Course Policies
+            </h2>
+
+            <div>
+                <TableContainer>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Policy</TableCell>
+                                <TableCell>Edit</TableCell>
+                                <TableCell>Delete</TableCell>
+
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {tableRows.map((row, index) => (
+                                <TableRow key={index}>
+                                    {editIdx === index ? (
+                                        <TableCell align="left">
+                                            <TextField defaultValue={row.one}
+                                                multiline={true}
+                                                rows={12}
+                                                rowsMax={12}
+                                                fullWidth={true}
+                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Policy' />
+                                        </TableCell>) :
+                                        (<TableCell>
+                                            {row.one}
+                                        </TableCell>)}
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <EditIcon onClick={() => startEdit(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CheckIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {editIdx !== index ? (
+                                            <DeleteIcon onClick={(e) => deleteRow(index)} style={{ cursor: "pointer" }} />
+                                        ) : (
+                                                <CloseIcon onClick={stopEdit} style={{ cursor: "pointer" }} />
+                                            )}
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <br />
+
+                <div>
+                    <Button onClick={addRow} variant='contained' color='primary'>
+                        Create Row
+                            </Button>
+                </div>
+            </div>
+
+            <br></br>
+            <br></br>
+        </Box>
+    );
 };
 
 
