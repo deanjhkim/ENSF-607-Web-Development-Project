@@ -7,10 +7,11 @@ import { TextField } from '@material-ui/core';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core'
 import Outline from './Outline'
-import { Link, Redirect, Route, useHistory } from 'react-router-dom';
+import { Link, Redirect, Route} from 'react-router-dom';
 import { Paper } from '@material-ui/core';
 import axios from 'axios';
 import { AppBar, Toolbar } from '@material-ui/core';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles({
   toolbarButtons: {
@@ -293,11 +294,14 @@ function Dashboard() {
 
   const history = useHistory();
 
-  const goToOutline = (url) => {
-    <Route path='/outline' component={Outline}
-      render={(props) => (<Outline {...props} url={url} />)} />
-    history.push('/outline');
+  
+
+  const goToOutline = () => {
+    //pushes data to Outline component on click
+    history.push('/outline', {  color: 'urltester' })
   }
+
+  
 
   return (
     <div className="Dashboard">
@@ -307,7 +311,8 @@ function Dashboard() {
         <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
       </Box>
       <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} />
-
+      
+      
     </div >
 
   );

@@ -3,7 +3,7 @@ import React from 'react';
 
 import Outline from './Outline';
 import Dashboard from './Dashboard';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
 
 function App() {
@@ -14,8 +14,8 @@ function App() {
       <div className="App">
         <div>
           <Switch>
-            <Route path='/outline' component={Outline}/>
-            <Route path='/' exact component={Dashboard} />
+            <Route path='/outline' render = { (props) => <Outline {...props} url = {'urltest'} /> } />
+            <Route path='/' render = { (props) => <Dashboard {...props} url = {'urltest2'} /> } />
           </Switch>
         </div>
       </div>

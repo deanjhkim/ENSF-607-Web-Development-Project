@@ -21,6 +21,9 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import Dashboard from './Dashboard'
+import { useLocation } from 'react-router';
 
 export default Outline;
 
@@ -32,18 +35,24 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+
+
 function Outline(props) {
 
     const classes = useStyles;
 
     const { faculty, number, term, section, description } = props;
+    const { url } = props;
 
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
     const [open, setSaveOpen] = useState(false);
 
+   
+    
+    
     return (
-
+        
         <div className="Outline">
             <MenuBar handleSaveOpen={handleSaveOpen} />
             <Grid container justify='center'>
@@ -119,17 +128,22 @@ function Outline(props) {
     );
 }
 
+
 function CalendarInfo() {
 
     const [courseDesc, setCourseDesc] = useState("");
     const [courseHours, setCourseHours] = useState("");
     const [courseCredits, setCourseCredits] = useState("");
     const [calendarRef, setCalendarRef] = useState("");
+    const location = useLocation();
 
     return (
         <Box width="95%" align='left'>
             <h2>
                 1. Calendar Information
+                
+               
+                
         </h2>
             <h3>
                 Course Description
@@ -139,11 +153,11 @@ function CalendarInfo() {
                 rows={12}
                 rowsMax={12}
                 fullWidth={true}
-                placeholder="Enter Course Description"
+                placeholder={location.state.color}
                 onChange={(e) => setCourseDesc(e.target.value)}
             />
             <h3>
-                Course Hours
+                Course Hours 
                 </h3>
 
             <TextField
