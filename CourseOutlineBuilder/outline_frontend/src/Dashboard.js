@@ -7,7 +7,7 @@ import { TextField } from '@material-ui/core';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core'
 import Outline from './Outline'
-import { Link, Redirect, Route} from 'react-router-dom';
+import { Link, Redirect, Route } from 'react-router-dom';
 import { Paper } from '@material-ui/core';
 import axios from 'axios';
 import { AppBar, Toolbar } from '@material-ui/core';
@@ -18,6 +18,8 @@ const useStyles = makeStyles({
     marginLeft: 'auto',
   },
 })
+
+const baseUrl = "http://localhost:8000/";
 
 function OutlineTable(props) {
 
@@ -125,10 +127,10 @@ function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setO
 
   const postOutline = async (outline) => {
     try {
-      axios.post('http://localhost:8000/outlines/', outline).then(response => {
-        console.log(`posted ${response.data} to backend`);
+      axios.post(`${baseUrl}outlines/`, outline).then(response => {
+        console.log(`posted outline ${response.data.id} to backend`);
       })
-    } catch(error){
+    } catch (error) {
       console.log(error)
     }
   }
@@ -140,7 +142,8 @@ function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setO
   }
 
   const handleCreate = () => {
-    
+
+    console.log("handling outline creation...");
     checkFields();
 
     const today = new Date();
@@ -149,13 +152,13 @@ function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setO
     const year = today.getFullYear();
     const date = `${year}-${month}-${day}`;
 
-    const outline = {faculty: faculty, number: number, term: term, section: section, description: description, date_created: date}
-    addOutline(outline)
-    postOutline(outline);
-    handleCreateClose();
-    // goToOutline();
-    if (filledFields()) {
+    const outline = { faculty: faculty, number: number, term: term, section: section, description: description, date_created: date }
 
+    if (filledFields()) {
+      console.log("creating outline...");
+      addOutline(outline);
+      postOutline(outline);
+      handleCreateClose();
     }
   }
 
@@ -258,17 +261,17 @@ function Dashboard() {
 
   const getOutlines = async () => {
     try {
-      axios.get('http://localhost:8000/outlines/')
+      axios.get(`${baseUrl}outlines/`)
         .then((response) => setOutlines(response.data));
     } catch (error) {
       console.error(error);
     }
   }
 
-  const deleteOutline = async (url) => {
+  const deleteOutline = async (id) => {
     try {
-      axios.delete(url)
-      console.log(`deleted ${url} from backend`)
+      axios.delete(`${baseUrl}outlines/${id}/`)
+      console.log(`deleted outline ${id} from backend`)
     } catch (error) {
       console.error(error);
     }
@@ -278,30 +281,28 @@ function Dashboard() {
   const handleCreateClose = () => setCreateOpen(false);
 
   const handleDelete = () => {
-    deleteOutline(outlines[itemSelected].url)
-    let _outlines = [...outlines];
-    _outlines.splice(itemSelected, 1);
-    setOutlines(_outlines);
+    if (itemSelected >= 0 && itemSelected < outlines.length) {
+      deleteOutline(outlines[itemSelected].id)
+      let _outlines = [...outlines];
+      _outlines.splice(itemSelected, 1);
+      setOutlines(_outlines);
+    }
   }
 
   const handleOpen = () => {
     if (itemSelected >= 0 && itemSelected < outlines.length) {
-      const url = outlines[itemSelected].url
-      console.log(`opening ${url} ...`)
-      goToOutline(url)
+      const outlineID = outlines[itemSelected].id
+      console.log(`opening outline ${outlineID} ...`)
+      goToOutline(outlineID)
     }
   }
 
   const history = useHistory();
 
-  
-
-  const goToOutline = () => {
+  const goToOutline = (id) => {
     //pushes data to Outline component on click
-    history.push('/outline', {  color: 'urltester' })
+    history.push('/outline', { outlineID: id })
   }
-
-  
 
   return (
     <div className="Dashboard">
@@ -311,8 +312,8 @@ function Dashboard() {
         <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
       </Box>
       <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} />
-      
-      
+
+
     </div >
 
   );

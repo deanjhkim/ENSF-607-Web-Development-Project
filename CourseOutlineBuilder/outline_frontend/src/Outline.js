@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
@@ -24,6 +24,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import Dashboard from './Dashboard'
 import { useLocation } from 'react-router';
+import axios from 'axios';
 
 export default Outline;
 
@@ -35,22 +36,57 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
-
 function Outline(props) {
 
     const classes = useStyles;
 
-    const { faculty, number, term, section, description } = props;
-    const { url } = props;
+    // Getting the outlint rest Url
+    const location = useLocation();
+    const [outlineID, setOutlineID] = useState(location.state.outlineID);
 
+    const baseUrl = 'http://localhost:8000/';
+
+    // States that hold data objects for outline components
+    const [outline, setOutline] = useState({});
+    const [calendarInfo, setCalendarInfo] = useState({});
+
+    console.log(outline)
+    console.log(calendarInfo)
+
+     // Loading data from backend on startup
+     useEffect(() => {
+        console.log(`outline ${outlineID} has been opened...`);
+        console.log('loading outline from backend...');
+        getOutline();
+        getCalendarInformation();
+      }, [])
+      
+    const getOutline = async () => {
+        try {
+            axios.get(`${baseUrl}outlines/${outlineID}/`)
+              .then((response) => setOutline(response.data));
+              
+          } catch (error) {
+            console.error(error);
+          }
+    };
+    
+    const getCalendarInformation = async () => {
+        try {
+            axios.get(`${baseUrl}calendarinformation/`)
+              .then((response) => {
+                    setCalendarInfo(response.data)
+                })
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+    // Save states
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
     const [open, setSaveOpen] = useState(false);
-
    
-    
-    
     return (
         
         <div className="Outline">
@@ -62,8 +98,16 @@ function Outline(props) {
                         <br></br>
                         <br></br>
                         <h1>
-                            University of Calgary Course Outline Builder
+                            {`${outline.faculty} ${outline.number} `} 
+                            <br/>
+                            {`${outline.description}`}
                         </h1>
+                        <h2>
+                            {`${outline.term}`}
+                        </h2>
+                        <h2>
+                            {`Section: ${outline.section}`}
+                        </h2>
                         <br></br>
 
                         <Box border={2} align='center'>
@@ -135,8 +179,7 @@ function CalendarInfo() {
     const [courseHours, setCourseHours] = useState("");
     const [courseCredits, setCourseCredits] = useState("");
     const [calendarRef, setCalendarRef] = useState("");
-    const location = useLocation();
-
+   
     return (
         <Box width="95%" align='left'>
             <h2>
@@ -153,7 +196,7 @@ function CalendarInfo() {
                 rows={12}
                 rowsMax={12}
                 fullWidth={true}
-                placeholder={location.state.color}
+                placeholder= "Enter Course Description"
                 onChange={(e) => setCourseDesc(e.target.value)}
             />
             <h3>

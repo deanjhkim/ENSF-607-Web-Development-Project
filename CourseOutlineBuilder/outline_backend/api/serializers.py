@@ -4,37 +4,52 @@ from rest_framework import serializers
 from .models import *
 
 
-class OutlineSerializer(serializers.HyperlinkedModelSerializer):
+class OutlineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Outline
         fields = '__all__'
 
-class CalendarInformationSerializer(serializers.HyperlinkedModelSerializer):
+class CalendarInformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CalendarInformation
         fields = '__all__'
 
-class LearningOutcomeSerializer(serializers.HyperlinkedModelSerializer):
+class LearningOutcomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LearningOutcome
         fields = '__all__'
 
-class GraduateAttributeSerializer(serializers.HyperlinkedModelSerializer):
+class TimetableSerializer(serializers.ModelSerializer):
     class Meta:
-        model = GraduateAttribute
+        model = Timetable
         fields = '__all__'
 
-class ExaminationsSerializer(serializers.HyperlinkedModelSerializer):
+class InstructorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instructor
+        fields = '__all__'
+
+class ExaminationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Examinations
         fields = '__all__'
 
-class FinalGradeDeterminationSerializer(serializers.HyperlinkedModelSerializer):
+class CalculatorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FinalGradeDetermination
+        model = Calculator
         fields = '__all__'
 
-class FinalGradeComponentSerializer(serializers.HyperlinkedModelSerializer):
+class FinalGradeComponentSerializer(serializers.ModelSerializer):
     class Meta:
         model = FinalGradeComponent
+        fields = '__all__'
+
+class TextbookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Textbook
+        fields = '__all__'
+
+class PolicySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Policy
         fields = '__all__'
