@@ -15,7 +15,7 @@ class CalendarInformationViewSet(viewsets.ModelViewSet):
     filter_fields = ('outline',)
 
 class LearningOutcomeViewSet(viewsets.ModelViewSet):
-    queryset = LearningOutcome.objects.all()
+    queryset = LearningOutcome.objects.all().order_by('number')
     serializer_class = LearningOutcomeSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('outline',)

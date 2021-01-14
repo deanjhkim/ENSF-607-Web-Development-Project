@@ -13,55 +13,56 @@ class Outline(models.Model):
 
 class CalendarInformation(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    hours = models.CharField(max_length=50, null=True)
-    credit = models.CharField(max_length=50, null=True)
-    calendar_reference = models.CharField(max_length=50, null=True)
+    description = models.CharField(max_length=500, default="")
+    hours = models.CharField(max_length=50, default="")
+    credit = models.CharField(max_length=50, default="")
+    calendar_reference = models.CharField(max_length=50, default="")
 
 class LearningOutcome(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    outcome = models.CharField(max_length=2, null=True)
-    description = models.CharField(max_length=50, null=True)
-    attribute = models.CharField(max_length=50, null=True)
-    level = models.CharField(max_length=50, null=True)
+    number = models.CharField(max_length=2, default="")
+    outcome = models.CharField(max_length=50, default="")
+    attribute = models.CharField(max_length=50, default="")
+    level = models.CharField(max_length=50, default="")
 
 class Timetable(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    section = models.CharField(max_length=50, null=True)
-    days = models.CharField(max_length=50, null=True)
-    time = models.CharField(max_length=50, null=True)
-    location = models.CharField(max_length=50, null=True)
+    section = models.CharField(max_length=50, default="")
+    days = models.CharField(max_length=50, default="")
+    time = models.CharField(max_length=50, default="")
+    location = models.CharField(max_length=50, default="")
 
 class Instructor(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    section = models.CharField(max_length=50, null=True)
-    first_name = models.CharField(max_length=50, null=True)
-    last_name = models.CharField(max_length=50, null=True)
-    phone = models.CharField(max_length=50, null=True)
-    office = models.CharField(max_length=50, null=True)
-    email = models.CharField(max_length=50, null=True)
+    section = models.CharField(max_length=50, default="")
+    first_name = models.CharField(max_length=50, default="")
+    last_name = models.CharField(max_length=50, default="")
+    phone = models.CharField(max_length=50, default="")
+    office = models.CharField(max_length=50, default="")
+    email = models.CharField(max_length=50, default="")
 
 class Examinations(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    text = models.CharField(max_length=1000, null=True)
+    text = models.CharField(max_length=1000, default="")
 
 class Calculator(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    text = models.CharField(max_length=1000, null=True)
+    text = models.CharField(max_length=1000, default="")
 
 class FinalGradeComponent(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    component = models.CharField(max_length=50, null=True)
-    outcomes = models.CharField(max_length=10, null=True)
-    weight = models.CharField(max_length=4, null=True)
+    component = models.CharField(max_length=50, default="")
+    outcomes = models.CharField(max_length=10, default="")
+    weight = models.CharField(max_length=4, default="")
 
 class Textbook(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50, null=True)
-    author = models.CharField(max_length=50, null=True)
-    year = models.CharField(max_length=50, null=True)
-    publisher = models.CharField(max_length=50, null=True)
-    requirement = models.CharField(max_length=50, null=True)
+    title = models.CharField(max_length=50, default="")
+    author = models.CharField(max_length=50, default="")
+    year = models.CharField(max_length=50, default="")
+    publisher = models.CharField(max_length=50, default="")
+    requirement = models.CharField(max_length=50, default="")
 
 class Policy(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    policy = models.CharField(max_length=50, null=True)
+    policy = models.CharField(max_length=50, default="")
