@@ -69,7 +69,7 @@ function OutlineTable(props) {
   );
 }
 
-function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setOutlines }) {
+function CreateFormDialog({ open, handleCreateClose, outlines, setOutlines }) {
 
   const [faculty, setFaculty] = useState("");
   const [facultyError, setFacultyError] = useState(false);
@@ -124,7 +124,14 @@ function CreateFormDialog({ open, handleCreateClose, goToOutline, outlines, setO
 
   const postOutline = async (outline) => {
     try {
-      axios.post(`${baseUrl}outlines/`, outline).then(response => {
+      axios.post(`${baseUrl}outlines/`, {
+        faculty: outline.faculty,
+        number: outline.number,
+        term: outline.term,
+        section: outline.section,
+        description: outline.description,
+        date_created: outline.date_created
+      }).then(response => {
         console.log(`posted outline ${response.data.id} to backend`);
       })
     } catch (error) {
@@ -248,13 +255,24 @@ function Dashboard() {
 
   const [open, setCreateOpen] = useState(false);
 
-  const [itemSelected, setItemSelected] = useState();
+  const [itemSelected, setItemSelected] = useState(null);
+
+  const [selectedID, setSelectedID] = useState("1")
 
   useEffect(() => {
     console.log('loading outlines from backend...')
     getOutlines();
 
   }, [])
+
+  useEffect(() => {
+    if(outlines[itemSelected]!=null){
+      setSelectedID(outlines[itemSelected.id])
+      console.log(itemSelected)
+      console.log(selectedID)
+      console.log(outlines)
+    }
+  },[itemSelected])
 
   const getOutlines = async () => {
     try {
@@ -287,10 +305,12 @@ function Dashboard() {
   }
 
   const handleOpen = () => {
-    if (itemSelected >= 0 && itemSelected < outlines.length) {
+    if (itemSelected >= 0 && itemSelected < outlines.length && outlines[itemSelected]!=null) {
       const outlineID = outlines[itemSelected].id
       console.log(`opening outline ${outlineID} ...`)
       goToOutline(outlineID)
+    } else if(outlines[itemSelected] == null && outlines.length > 0){
+      goToOutline(0)
     }
   }
 

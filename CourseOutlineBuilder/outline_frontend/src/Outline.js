@@ -43,22 +43,6 @@ function Outline(props) {
 
     const baseUrl = 'http://localhost:8000/';
 
-
-    //States that hold data objects for outline components.
-
-    const [outline, setOutline] = useState({});
-    const [calendarInfo, setCalendarInfo] = useState({});
-    const [learningOutcomes, setLearningOutcomes] = useState([]);
-    const [timetables, setTimetables] = useState([]);
-    const [instructors, setInstructors] = useState([]);
-    const [examinations, setExaminations] = useState({});
-    const [calculators, setCalculators] = useState({});
-    const [gradeComponents, setGradeComponents] = useState([]);
-    const [textbooks, setTextbooks] = useState([]);
-    const [policies, setPolicies] = useState([]);
-
-    const [loaded, setLoaded] = useState(false);
-
     // Functions to create data objects
 
     const createCalendarInfo = (id, description, hours, credit, calendar_reference, outline) => {
@@ -97,6 +81,21 @@ function Outline(props) {
         return { id, policy, outline }
     }
 
+    //States that hold data objects for outline components.
+
+    const [outline, setOutline] = useState({});
+    const [calendarInfo, setCalendarInfo] = useState(createCalendarInfo(null, "", "", "", "", outlineID));
+    const [learningOutcomes, setLearningOutcomes] = useState([]);
+    const [timetables, setTimetables] = useState([]);
+    const [instructors, setInstructors] = useState([]);
+    const [examinations, setExaminations] = useState({});
+    const [calculators, setCalculators] = useState({});
+    const [gradeComponents, setGradeComponents] = useState([]);
+    const [textbooks, setTextbooks] = useState([]);
+    const [policies, setPolicies] = useState([]);
+
+    const [loaded, setLoaded] = useState(false);
+
     //Functions to load data from the rest api.
 
     const getOutline = async () => {
@@ -113,12 +112,11 @@ function Outline(props) {
         try {
             axios.get(`${baseUrl}calendarinformation/?outline=${outlineID}`)
                 .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no calendar data found');
-                        setCalendarInfo(createCalendarInfo(null, "", "", "", "", outlineID));
-                    } else {
+                    if (response.data.length !== 0) {
                         console.log('calendar data found');
                         setCalendarInfo(response.data[0]);
+                    } else {
+                        console.log('no calendar data found');
                     }
                 })
         } catch (error) {
@@ -320,29 +318,39 @@ function Outline(props) {
 
     const saveCalendarInfo = async () => {
         console.log(calendarInfo.id)
-        if (calendarInfo.id != null) {
+        if (calendarInfo.id == null) {
             try {
-                console.log('deleting old calendar info')
-                axios.delete(`${baseUrl}calendarinformation/${calendarInfo.id}`)
+                console.log('posting calendar info')
+                axios.post(`${baseUrl}calendarinformation/`, {
+                    description: calendarInfo.description,
+                    hours: calendarInfo.hours,
+                    credit: calendarInfo.credit,
+                    calendar_reference: calendarInfo.calendar_reference,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setCalendarInfo(response.data);
+                })
             } catch (error) {
                 console.log(error)
-                return
             }
-        }
-        try {
-            console.log('posting calendar info')
-            axios.post(`${baseUrl}calendarinformation/`, {
-                description: calendarInfo.description,
-                hours: calendarInfo.hours,
-                credit: calendarInfo.credit,
-                calendar_reference: calendarInfo.calendar_reference,
-                outline: outlineID
+        } else {
+            try {
+                console.log('putting calendar info')
+                axios.put(`${baseUrl}calendarinformation/${calendarInfo.id}/`, {
+                    description: calendarInfo.description,
+                    hours: calendarInfo.hours,
+                    credit: calendarInfo.credit,
+                    calendar_reference: calendarInfo.calendar_reference,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setCalendarInfo(response.data);
+                    console.log(response)
+                })
+            } catch (error) {
+                console.log(error)
             }
-            ).then((response) => {
-                setCalendarInfo(response.data);
-            });
-        } catch (error) {
-            console.log(error)
         }
         // else {
         //     console.log('putting calendar info')

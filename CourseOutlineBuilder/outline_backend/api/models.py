@@ -1,68 +1,68 @@
 from django.db import models
 
 class Outline(models.Model):
-    faculty = models.CharField(max_length=4)
-    number = models.CharField(max_length=6)
-    term = models.CharField(max_length=5)
-    section = models.CharField(max_length=3)
-    description = models.CharField(max_length=50)
-    date_created = models.CharField(max_length=10)
+    faculty = models.CharField(max_length=100, default="", blank=True)
+    number = models.CharField(max_length=100, default="", blank=True)
+    term = models.CharField(max_length=100, default="", blank=True)
+    section = models.CharField(max_length=100, default="", blank=True)
+    description = models.CharField(max_length=50, default="", blank=True)
+    date_created = models.CharField(max_length=50, default="", blank=True)
 
     def __str__(self):
         return self.faculty + self.number + self.term + self.section
 
 class CalendarInformation(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    description = models.CharField(max_length=500, default="")
-    hours = models.CharField(max_length=50, default="")
-    credit = models.CharField(max_length=50, default="")
-    calendar_reference = models.CharField(max_length=50, default="")
+    description = models.CharField(max_length=500, default="", blank=True)
+    hours = models.CharField(max_length=50, default="", blank=True)
+    credit = models.CharField(max_length=50, default="", blank=True)
+    calendar_reference = models.CharField(max_length=50, default="", blank=True)
 
 class LearningOutcome(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    number = models.CharField(max_length=2, default="")
-    outcome = models.CharField(max_length=50, default="")
-    attribute = models.CharField(max_length=50, default="")
-    level = models.CharField(max_length=50, default="")
+    number = models.CharField(max_length=50, default="", blank=True)
+    outcome = models.CharField(max_length=50, default="", blank=True)
+    attribute = models.CharField(max_length=50, default="", blank=True)
+    level = models.CharField(max_length=50, default="", blank=True)
 
 class Timetable(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    section = models.CharField(max_length=50, default="")
-    days = models.CharField(max_length=50, default="")
-    time = models.CharField(max_length=50, default="")
-    location = models.CharField(max_length=50, default="")
+    section = models.CharField(max_length=50, default="", blank=True)
+    days = models.CharField(max_length=50, default="", blank=True)
+    time = models.CharField(max_length=50, default="", blank=True)
+    location = models.CharField(max_length=50, default="", blank=True)
 
 class Instructor(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    section = models.CharField(max_length=50, default="")
-    first_name = models.CharField(max_length=50, default="")
-    last_name = models.CharField(max_length=50, default="")
-    phone = models.CharField(max_length=50, default="")
-    office = models.CharField(max_length=50, default="")
-    email = models.CharField(max_length=50, default="")
+    section = models.CharField(max_length=50, default="", blank=True)
+    first_name = models.CharField(max_length=50, default="", blank=True)
+    last_name = models.CharField(max_length=50, default="", blank=True)
+    phone = models.CharField(max_length=50, default="", blank=True)
+    office = models.CharField(max_length=50, default="", blank=True)
+    email = models.CharField(max_length=50, default="", blank=True)
 
 class Examinations(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    text = models.CharField(max_length=1000, default="")
+    text = models.CharField(max_length=1000, default="", blank=True)
 
 class Calculator(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    text = models.CharField(max_length=1000, default="")
+    text = models.CharField(max_length=1000, default="", blank=True)
 
 class FinalGradeComponent(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    component = models.CharField(max_length=50, default="")
-    outcomes = models.CharField(max_length=10, default="")
-    weight = models.CharField(max_length=4, default="")
+    component = models.CharField(max_length=50, default="", blank=True)
+    outcomes = models.CharField(max_length=50, default="", blank=True)
+    weight = models.CharField(max_length=50, default="", blank=True)
 
 class Textbook(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50, default="")
-    author = models.CharField(max_length=50, default="")
-    year = models.CharField(max_length=50, default="")
-    publisher = models.CharField(max_length=50, default="")
-    requirement = models.CharField(max_length=50, default="")
+    title = models.CharField(max_length=50, default="", blank=True)
+    author = models.CharField(max_length=50, default="", blank=True)
+    year = models.CharField(max_length=50, default="", blank=True)
+    publisher = models.CharField(max_length=50, default="", blank=True)
+    requirement = models.CharField(max_length=50, default="", blank=True)
 
 class Policy(models.Model):
     outline = models.ForeignKey(Outline, on_delete=models.CASCADE)
-    policy = models.CharField(max_length=50, default="")
+    policy = models.CharField(max_length=50, default="", blank=True)
