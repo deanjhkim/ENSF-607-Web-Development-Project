@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
-import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -14,18 +13,16 @@ import Paper from '@material-ui/core/Paper';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid'
-import { Dialog, DialogTitle, DialogContent, DialogActions, Divider, makeStyles } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckIcon from "@material-ui/icons/Check";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import Dashboard from './Dashboard'
 import { useLocation } from 'react-router';
 import axios from 'axios';
-
+import Save from './Save'
 export default Outline;
 
 
@@ -40,57 +37,326 @@ function Outline(props) {
 
     const classes = useStyles;
 
-    // Getting the outlint rest Url
+    // Getting the outlint rest Url.
     const location = useLocation();
     const [outlineID, setOutlineID] = useState(location.state.outlineID);
 
     const baseUrl = 'http://localhost:8000/';
 
-    // States that hold data objects for outline components
+
+    //States that hold data objects for outline components.
+
     const [outline, setOutline] = useState({});
     const [calendarInfo, setCalendarInfo] = useState({});
+    const [learningOutcomes, setLearningOutcomes] = useState([]);
+    const [timetables, setTimetables] = useState([]);
+    const [instructors, setInstructors] = useState([]);
+    const [examinations, setExaminations] = useState({});
+    const [calculators, setCalculators] = useState({});
+    const [gradeComponents, setGradeComponents] = useState([]);
+    const [textbooks, setTextbooks] = useState([]);
+    const [policies, setPolicies] = useState([]);
 
-    console.log(outline)
-    console.log(calendarInfo)
+    const [loaded, setLoaded] = useState(false);
 
-     // Loading data from backend on startup
-     useEffect(() => {
+    // Functions to create data objects
+
+    const createCalendarInfo = (id, description, hours, credit, calendar_reference, outline) => {
+        return { id, description, hours, credit, calendar_reference, outline }
+    }
+
+    const createLearningOutcome = (id, number, outcome, attribute, level, outline) => {
+        return { id, number, outcome, attribute, level, outline }
+    }
+
+    const createTimetable = (id, section, days, time, location, outline) => {
+        return { id, section, days, time, location, outline }
+    }
+
+    // const createInstructor = (id, section, first_name, last_name, phone, office, email, outline) => {
+    //     return { id, section, first_name, last_name, phone, office, email, outline }
+    // }
+
+    const createExamination = (id, text, outline) => {
+        return { id, text, outline }
+    }
+
+    const createCalculator = (id, text, outline) => {
+        return { id, text, outline }
+    }
+
+    const createGradeComponent = (id, component, outcomes, weight, outline) => {
+        return { id, component, outcomes, weight, outline }
+    }
+
+    const createTextbook = (id, title, author, year, publisher, requirement, outline) => {
+        return { id, title, author, year, publisher, requirement, outline }
+    }
+
+    const createPolicy = (id, policy, outline) => {
+        return { id, policy, outline }
+    }
+
+    //Functions to load data from the rest api.
+
+    const getOutline = async () => {
+        try {
+            axios.get(`${baseUrl}outlines/${outlineID}/`)
+                .then((response) => setOutline(response.data));
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const getCalendarInformation = async () => {
+        try {
+            axios.get(`${baseUrl}calendarinformation/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no calendar data found');
+                        setCalendarInfo(createCalendarInfo(null, "", "", "", "", outlineID));
+                    } else {
+                        console.log('calendar data found');
+                        setCalendarInfo(response.data[0]);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getLearningOutcomes = async () => {
+        try {
+            axios.get(`${baseUrl}learningoutcomes/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no learning outcome data found');
+                        setLearningOutcomes([createLearningOutcome(null, "0", "", "", "", outlineID)]);
+                    } else {
+                        console.log('learning outcome data found');
+                        setLearningOutcomes(response.data);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getTimetables = async () => {
+        try {
+            axios.get(`${baseUrl}timetables/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no timetable data found');
+                        setTimetables([createTimetable(null, "", "", "", "", outlineID)]);
+                    } else {
+                        console.log('timetable data found');
+                        setTimetables(response.data);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // const getInstructors = async () => {
+    //     try {
+    //         axios.get(`${baseUrl}instructors/?outline=${outlineID}`)
+    //             .then((response) => {
+    //                 if (response.data.length === 0) {
+    //                     console.log('no instructor data found');
+    //                     setInstructors([createInstructor(null, "", "", "", "", "", "", outlineID)]);
+    //                 } else {
+    //                     console.log('instructor data found');
+    //                     setInstructors(response.data);
+    //                 }
+    //             })
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // }
+
+    const getExaminations = async () => {
+        try {
+            axios.get(`${baseUrl}examinations/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no examination data found');
+                        setExaminations(createExamination(null, "", outlineID));
+                    } else {
+                        console.log('examination data found');
+                        setExaminations(response.data[0]);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+
+    const getCalculators = async () => {
+        try {
+            axios.get(`${baseUrl}calculators/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no calculators data found');
+                        setCalculators(createCalculator(null, "", outlineID));
+                    } else {
+                        console.log('calculators data found');
+                        setCalculators(response.data[0]);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getGradeComponents = async () => {
+        try {
+            axios.get(`${baseUrl}finalgradecomponents/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no final grade component data found')
+                        setGradeComponents([createGradeComponent(null, "", outlineID)]);
+                    } else {
+                        console.log('final grade component data found')
+                        setGradeComponents(response.data)
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getTextbooks = async () => {
+        try {
+            axios.get(`${baseUrl}textbooks/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no textbook data found');
+                        setTextbooks(createTextbook(null, "", "", "", "", "", outlineID));
+                    } else {
+                        console.log('textbook data found');
+                        setTextbooks(response.data);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const getPolicies = async () => {
+        try {
+            axios.get(`${baseUrl}policies/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length === 0) {
+                        console.log('no policy data found');
+                        setPolicies(createPolicy(null, "", outlineID));
+                    } else {
+                        console.log('policy data found');
+                        setPolicies(response.data);
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    // Initial render use effect
+    useEffect(() => {
         console.log(`outline ${outlineID} has been opened...`);
         console.log('loading outline from backend...');
         getOutline();
         getCalendarInformation();
-      }, [])
-      
-    const getOutline = async () => {
-        try {
-            axios.get(`${baseUrl}outlines/${outlineID}/`)
-              .then((response) => setOutline(response.data));
-              
-          } catch (error) {
-            console.error(error);
-          }
-    };
-    
-    const getCalendarInformation = async () => {
-        try {
-            axios.get(`${baseUrl}calendarinformation/`)
-              .then((response) => {
-                    setCalendarInfo(response.data)
-                })
-          } catch (error) {
-            console.error(error);
-          }
-        }
+        getLearningOutcomes();
+        getTimetables();
+        // getInstructors();
+        getExaminations();
+        getCalculators();
+        getGradeComponents();
+        getTextbooks();
+        getPolicies();
+    }, [])
+
+    console.log(calendarInfo)
+
+    // useEffect(() => {
+
+    //     console.log('DATA: ');
+    //     console.log('outline: ');
+    //     console.log(outline);
+    //     console.log('calendar: ');
+    //     console.log(calendarInfo);
+    //     console.log('learning outcomes: ');
+    //     console.log(learningOutcomes);
+    //     console.log('Timetable: ');
+    //     console.log(timetables);
+    //     // console.log('Instructors: ');
+    //     // console.log(instructors);
+    //     console.log('Examinations: ');
+    //     console.log(examinations);
+    //     console.log('calculator: ');
+    //     console.log(calculators);
+    //     console.log('final grade components: ');
+    //     console.log(gradeComponents);
+    //     console.log('Textbooks: ');
+    //     console.log(textbooks);
+    //     console.log('Policies: ');
+    //     console.log(policies);
+    // })
 
     // Save states
     const handleSaveOpen = () => setSaveOpen(true);
     const handleSaveClose = () => setSaveOpen(false);
     const [open, setSaveOpen] = useState(false);
-   
+
+    const handleSave = () => {
+        handleSaveOpen()
+        console.log('SAVING OUTLINE...')
+        saveCalendarInfo()
+        console.log('SAVE COMPLETE')
+    };
+
+    const saveCalendarInfo = async () => {
+        console.log(calendarInfo.id)
+        if (calendarInfo.id != null) {
+            try {
+                console.log('deleting old calendar info')
+                axios.delete(`${baseUrl}calendarinformation/${calendarInfo.id}`)
+            } catch (error) {
+                console.log(error)
+                return
+            }
+        }
+        try {
+            console.log('posting calendar info')
+            axios.post(`${baseUrl}calendarinformation/`, {
+                description: calendarInfo.description,
+                hours: calendarInfo.hours,
+                credit: calendarInfo.credit,
+                calendar_reference: calendarInfo.calendar_reference,
+                outline: outlineID
+            }
+            ).then((response) => {
+                setCalendarInfo(response.data);
+            });
+        } catch (error) {
+            console.log(error)
+        }
+        // else {
+        //     console.log('putting calendar info')
+        //     console.log(calendarInfo)
+        //     axios.put(`${baseUrl}calendarinformation/${calendarInfo.id}/`, calendarInfo).then((response) => {
+        //         console.log(response);
+        //     });;
+        // }
+    }
+
     return (
-        
+
         <div className="Outline">
-            <MenuBar handleSaveOpen={handleSaveOpen} />
+            <MenuBar handleSaveOpen={handleSaveOpen} handleSave={handleSave} />
             <Grid container justify='center'>
                 <Grid item align='center'>
                     <Box component={Paper} align='left'>
@@ -98,8 +364,8 @@ function Outline(props) {
                         <br></br>
                         <br></br>
                         <h1>
-                            {`${outline.faculty} ${outline.number} `} 
-                            <br/>
+                            {`${outline.faculty} ${outline.number} `}
+                            <br />
                             {`${outline.description}`}
                         </h1>
                         <h2>
@@ -111,7 +377,7 @@ function Outline(props) {
                         <br></br>
 
                         <Box border={2} align='center'>
-                            <CalendarInfo />
+                            <CalendarInfo calendarInfoID={calendarInfo.id} calendarInfo={calendarInfo} setCalendarInfo={setCalendarInfo} createCalendarInfo={createCalendarInfo} />
                         </Box>
                         <br></br>
                         <br></br>
@@ -173,38 +439,44 @@ function Outline(props) {
 }
 
 
-function CalendarInfo() {
+function CalendarInfo(props) {
+
+    const { calendarInfoID, calendarInfo, setCalendarInfo, createCalendarInfo } = props;
 
     const [courseDesc, setCourseDesc] = useState("");
     const [courseHours, setCourseHours] = useState("");
     const [courseCredits, setCourseCredits] = useState("");
     const [calendarRef, setCalendarRef] = useState("");
-   
+
+    useEffect(() => {
+        setCalendarInfo(createCalendarInfo(calendarInfoID, courseDesc, courseHours, courseCredits, calendarRef, calendarInfo.outline));
+    }, [courseDesc, courseHours, courseCredits, calendarRef, calendarInfo.outline
+    ])
+
     return (
         <Box width="95%" align='left'>
             <h2>
                 1. Calendar Information
-                
-               
-                
-        </h2>
+            </h2>
             <h3>
                 Course Description
-        </h3>
+            </h3>
             <TextField
                 multiline={true}
                 rows={12}
                 rowsMax={12}
                 fullWidth={true}
-                placeholder= "Enter Course Description"
+                value={calendarInfo.description}
+                placeholder="Enter Course Description"
                 onChange={(e) => setCourseDesc(e.target.value)}
             />
             <h3>
-                Course Hours 
+                Course Hours
                 </h3>
 
             <TextField
                 multiline={true}
+                value={calendarInfo.hours}
                 placeholder="Enter Course Hours"
                 onChange={(e) => setCourseHours(e.target.value)}
             />
@@ -214,6 +486,7 @@ function CalendarInfo() {
                 </h3>
             <TextField
                 multiline={true}
+                value={calendarInfo.credit}
                 placeholder="Enter Number of Credits"
                 onChange={(e) => setCourseCredits(e.target.value)}
             />
@@ -223,6 +496,7 @@ function CalendarInfo() {
             <TextField
                 multiline={true}
                 fullWidth={true}
+                value={calendarInfo.calendar_reference}
                 placeholder="Enter Calendar Reference URL"
                 onChange={(e) => setCalendarRef(e.target.value)}
                 border={1}
@@ -384,6 +658,7 @@ function LearningOutcomes() {
 
 function Timetable() {
 
+    //id, section, days, time, location, outline (outlineID)
     const createRow = (one, two, three, four) => {
         return { one, two, three, four };
     };
@@ -1109,13 +1384,13 @@ function CoursePolicies() {
 };
 
 
-function MenuBar({ handleSaveOpen }) {
+function MenuBar({ handleSaveOpen, handleSave }) {
 
     return (
         <AppBar Position='static'>
             <Toolbar>
                 <section>
-                    <Button variant="contained" color="primary" onClick={handleSaveOpen}>
+                    <Button variant="contained" color="primary" onClick={handleSave}>
                         Save
                     </Button>
                 </section>
