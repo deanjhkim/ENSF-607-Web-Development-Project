@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import Button from '@material-ui/core/Button';
+import { ButtonGroup } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Table from '@material-ui/core/Table';
@@ -21,6 +22,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 export default Outline;
 
@@ -28,6 +30,9 @@ export default Outline;
 const useStyles = makeStyles((theme) => ({
     background: {
         color: 'primary'
+    },
+    toolbarButtons: {
+        marginLeft: 'auto',
     }
 
 }));
@@ -1626,14 +1631,30 @@ function CoursePolicies(props) {
 
 function MenuBar({ handleSaveOpen, handleSave }) {
 
+    const classes = useStyles()
+
     return (
         <AppBar Position='static'>
             <Toolbar>
-                <section>
-                    <Button variant="contained" color="primary" onClick={handleSave}>
-                        Save
-                    </Button>
-                </section>
+            
+                    <Box >
+                        <h1>
+                            Course Outline Builder
+                        </h1>
+                    </Box>
+                    
+                    <Box className={classes.toolbarButtons}>
+                        <ButtonGroup variant="contained" color="secondary" aria-label="outlined primary button group" >
+                            <Button variant="contained" color="secondary" onClick={handleSave} align="left">
+                                Save
+                            </Button>
+                            <Button component={ Link } to="/" variant="contained" color="secondary" align="left">
+                                Home
+                            </Button>
+                        </ButtonGroup>
+                    </Box>
+
+                
             </Toolbar>
         </AppBar>
 
