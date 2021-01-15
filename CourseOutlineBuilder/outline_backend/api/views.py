@@ -28,7 +28,7 @@ class TimetableViewSet(viewsets.ModelViewSet):
 
 class InstructorViewSet(viewsets.ModelViewSet):
     queryset = Instructor.objects.all()
-    serializer_class = Instructor
+    serializer_class = InstructorSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('outline',)    
 

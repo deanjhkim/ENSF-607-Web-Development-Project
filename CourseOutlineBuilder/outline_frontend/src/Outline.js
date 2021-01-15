@@ -22,7 +22,6 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useLocation } from 'react-router';
 import axios from 'axios';
-import Save from './Save'
 export default Outline;
 
 
@@ -33,70 +32,16 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function Outline(props) {
+const baseUrl = 'http://localhost:8000/';
+
+function Outline() {
 
     const classes = useStyles;
 
     // Getting the outlint rest Url.
     const location = useLocation();
     const [outlineID, setOutlineID] = useState(location.state.outlineID);
-
-    const baseUrl = 'http://localhost:8000/';
-
-    // Functions to create data objects
-
-    const createCalendarInfo = (id, description, hours, credit, calendar_reference, outline) => {
-        return { id, description, hours, credit, calendar_reference, outline }
-    }
-
-    const createLearningOutcome = (id, number, outcome, attribute, level, outline) => {
-        return { id, number, outcome, attribute, level, outline }
-    }
-
-    const createTimetable = (id, section, days, time, location, outline) => {
-        return { id, section, days, time, location, outline }
-    }
-
-    // const createInstructor = (id, section, first_name, last_name, phone, office, email, outline) => {
-    //     return { id, section, first_name, last_name, phone, office, email, outline }
-    // }
-
-    const createExamination = (id, text, outline) => {
-        return { id, text, outline }
-    }
-
-    const createCalculator = (id, text, outline) => {
-        return { id, text, outline }
-    }
-
-    const createGradeComponent = (id, component, outcomes, weight, outline) => {
-        return { id, component, outcomes, weight, outline }
-    }
-
-    const createTextbook = (id, title, author, year, publisher, requirement, outline) => {
-        return { id, title, author, year, publisher, requirement, outline }
-    }
-
-    const createPolicy = (id, policy, outline) => {
-        return { id, policy, outline }
-    }
-
-    //States that hold data objects for outline components.
-
     const [outline, setOutline] = useState({});
-    const [calendarInfo, setCalendarInfo] = useState(createCalendarInfo(null, "", "", "", "", outlineID));
-    const [learningOutcomes, setLearningOutcomes] = useState([]);
-    const [timetables, setTimetables] = useState([]);
-    const [instructors, setInstructors] = useState([]);
-    const [examinations, setExaminations] = useState({});
-    const [calculators, setCalculators] = useState({});
-    const [gradeComponents, setGradeComponents] = useState([]);
-    const [textbooks, setTextbooks] = useState([]);
-    const [policies, setPolicies] = useState([]);
-
-    const [loaded, setLoaded] = useState(false);
-
-    //Functions to load data from the rest api.
 
     const getOutline = async () => {
         try {
@@ -107,6 +52,123 @@ function Outline(props) {
             console.error(error);
         }
     };
+
+    // Initial render use effect
+    useEffect(() => {
+        console.log(`outline ${outlineID} has been opened...`);
+        console.log('loading outline from backend...');
+        getOutline();
+    }, [])
+
+    // Save states
+    const handleSaveOpen = () => setSave(true);
+    const handleSaveClose = () => setSave(false);
+    const [save, setSave] = useState(false);
+
+    const handleSave = () => {
+        console.log('saving...');
+        handleSaveOpen()
+    };
+
+    return (
+
+        <div className="Outline">
+            <MenuBar handleSaveOpen={handleSaveOpen} handleSave={handleSave} />
+            <Grid container justify='center'>
+                <Grid item align='center'>
+                    <Box component={Paper} align='left'>
+                        <br></br>
+                        <br></br>
+                        <br></br>
+                        <h1>
+                            {`${outline.faculty} ${outline.number} `}
+                            <br />
+                            {`${outline.description}`}
+                        </h1>
+                        <h2>
+                            {`${outline.term}`}
+                        </h2>
+                        <h2>
+                            {`Section: ${outline.section}`}
+                        </h2>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CalendarInfo outlineID={outlineID} save={save} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <LearningOutcomes save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <Timetable save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CourseInstructors save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <Examinations save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <UseOfCalculators save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <FinalGradeDetermination save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <Textbook save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <Box border={2} align='center'>
+                            <CoursePolicies save={save} outlineID={outlineID} />
+                        </Box>
+                        <br></br>
+                        <br></br>
+
+                        <CreateSaveDialog open={save} handleSaveClose={handleSaveClose} />
+                    </Box>
+                </Grid>
+            </Grid>
+        </div >
+    );
+}
+
+
+function CalendarInfo(props) {
+
+    const createCalendarInfo = (id, description, hours, credit, calendar_reference, outline) => {
+        return { id, description, hours, credit, calendar_reference, outline }
+    }
+
+    const { outlineID, save } = props
+    const [calendarInfo, setCalendarInfo] = useState(createCalendarInfo(null, "", "", "", "", outlineID));
+
+    const [courseDesc, setCourseDesc] = useState(calendarInfo.description);
+    const [courseHours, setCourseHours] = useState(calendarInfo.hours);
+    const [courseCredits, setCourseCredits] = useState(calendarInfo.credit);
+    const [calendarRef, setCalendarRef] = useState(calendarInfo.calendar_reference);
 
     const getCalendarInformation = async () => {
         try {
@@ -124,200 +186,7 @@ function Outline(props) {
         }
     }
 
-    const getLearningOutcomes = async () => {
-        try {
-            axios.get(`${baseUrl}learningoutcomes/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no learning outcome data found');
-                        setLearningOutcomes([createLearningOutcome(null, "0", "", "", "", outlineID)]);
-                    } else {
-                        console.log('learning outcome data found');
-                        setLearningOutcomes(response.data);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const getTimetables = async () => {
-        try {
-            axios.get(`${baseUrl}timetables/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no timetable data found');
-                        setTimetables([createTimetable(null, "", "", "", "", outlineID)]);
-                    } else {
-                        console.log('timetable data found');
-                        setTimetables(response.data);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    // const getInstructors = async () => {
-    //     try {
-    //         axios.get(`${baseUrl}instructors/?outline=${outlineID}`)
-    //             .then((response) => {
-    //                 if (response.data.length === 0) {
-    //                     console.log('no instructor data found');
-    //                     setInstructors([createInstructor(null, "", "", "", "", "", "", outlineID)]);
-    //                 } else {
-    //                     console.log('instructor data found');
-    //                     setInstructors(response.data);
-    //                 }
-    //             })
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-
-    const getExaminations = async () => {
-        try {
-            axios.get(`${baseUrl}examinations/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no examination data found');
-                        setExaminations(createExamination(null, "", outlineID));
-                    } else {
-                        console.log('examination data found');
-                        setExaminations(response.data[0]);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-
-    const getCalculators = async () => {
-        try {
-            axios.get(`${baseUrl}calculators/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no calculators data found');
-                        setCalculators(createCalculator(null, "", outlineID));
-                    } else {
-                        console.log('calculators data found');
-                        setCalculators(response.data[0]);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const getGradeComponents = async () => {
-        try {
-            axios.get(`${baseUrl}finalgradecomponents/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no final grade component data found')
-                        setGradeComponents([createGradeComponent(null, "", outlineID)]);
-                    } else {
-                        console.log('final grade component data found')
-                        setGradeComponents(response.data)
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const getTextbooks = async () => {
-        try {
-            axios.get(`${baseUrl}textbooks/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no textbook data found');
-                        setTextbooks(createTextbook(null, "", "", "", "", "", outlineID));
-                    } else {
-                        console.log('textbook data found');
-                        setTextbooks(response.data);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const getPolicies = async () => {
-        try {
-            axios.get(`${baseUrl}policies/?outline=${outlineID}`)
-                .then((response) => {
-                    if (response.data.length === 0) {
-                        console.log('no policy data found');
-                        setPolicies(createPolicy(null, "", outlineID));
-                    } else {
-                        console.log('policy data found');
-                        setPolicies(response.data);
-                    }
-                })
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    // Initial render use effect
-    useEffect(() => {
-        console.log(`outline ${outlineID} has been opened...`);
-        console.log('loading outline from backend...');
-        getOutline();
-        getCalendarInformation();
-        getLearningOutcomes();
-        getTimetables();
-        // getInstructors();
-        getExaminations();
-        getCalculators();
-        getGradeComponents();
-        getTextbooks();
-        getPolicies();
-    }, [])
-
-    console.log(calendarInfo)
-
-    // useEffect(() => {
-
-    //     console.log('DATA: ');
-    //     console.log('outline: ');
-    //     console.log(outline);
-    //     console.log('calendar: ');
-    //     console.log(calendarInfo);
-    //     console.log('learning outcomes: ');
-    //     console.log(learningOutcomes);
-    //     console.log('Timetable: ');
-    //     console.log(timetables);
-    //     // console.log('Instructors: ');
-    //     // console.log(instructors);
-    //     console.log('Examinations: ');
-    //     console.log(examinations);
-    //     console.log('calculator: ');
-    //     console.log(calculators);
-    //     console.log('final grade components: ');
-    //     console.log(gradeComponents);
-    //     console.log('Textbooks: ');
-    //     console.log(textbooks);
-    //     console.log('Policies: ');
-    //     console.log(policies);
-    // })
-
-    // Save states
-    const handleSaveOpen = () => setSaveOpen(true);
-    const handleSaveClose = () => setSaveOpen(false);
-    const [open, setSaveOpen] = useState(false);
-
-    const handleSave = () => {
-        handleSaveOpen()
-        console.log('SAVING OUTLINE...')
-        saveCalendarInfo()
-        console.log('SAVE COMPLETE')
-    };
-
     const saveCalendarInfo = async () => {
-        console.log(calendarInfo.id)
         if (calendarInfo.id == null) {
             try {
                 console.log('posting calendar info')
@@ -346,120 +215,46 @@ function Outline(props) {
                 }
                 ).then((response) => {
                     setCalendarInfo(response.data);
-                    console.log(response)
                 })
             } catch (error) {
                 console.log(error)
             }
         }
-        // else {
-        //     console.log('putting calendar info')
-        //     console.log(calendarInfo)
-        //     axios.put(`${baseUrl}calendarinformation/${calendarInfo.id}/`, calendarInfo).then((response) => {
-        //         console.log(response);
-        //     });;
-        // }
     }
 
-    return (
-
-        <div className="Outline">
-            <MenuBar handleSaveOpen={handleSaveOpen} handleSave={handleSave} />
-            <Grid container justify='center'>
-                <Grid item align='center'>
-                    <Box component={Paper} align='left'>
-                        <br></br>
-                        <br></br>
-                        <br></br>
-                        <h1>
-                            {`${outline.faculty} ${outline.number} `}
-                            <br />
-                            {`${outline.description}`}
-                        </h1>
-                        <h2>
-                            {`${outline.term}`}
-                        </h2>
-                        <h2>
-                            {`Section: ${outline.section}`}
-                        </h2>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <CalendarInfo calendarInfoID={calendarInfo.id} calendarInfo={calendarInfo} setCalendarInfo={setCalendarInfo} createCalendarInfo={createCalendarInfo} />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <LearningOutcomes />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <Timetable />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <CourseInstructors />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <Examinations />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <UseOfCalculators />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <FinalGradeDetermination />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <Textbook />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <Box border={2} align='center'>
-                            <CoursePolicies />
-                        </Box>
-                        <br></br>
-                        <br></br>
-
-                        <CreateSaveDialog open={open} handleSaveClose={handleSaveClose} />
-                    </Box>
-                </Grid>
-            </Grid>
-        </div >
-    );
-}
-
-
-function CalendarInfo(props) {
-
-    const { calendarInfoID, calendarInfo, setCalendarInfo, createCalendarInfo } = props;
-
-    const [courseDesc, setCourseDesc] = useState("");
-    const [courseHours, setCourseHours] = useState("");
-    const [courseCredits, setCourseCredits] = useState("");
-    const [calendarRef, setCalendarRef] = useState("");
+    useEffect(() => {
+        if (save == true) {
+            saveCalendarInfo();
+        }
+    }, [save])
 
     useEffect(() => {
-        setCalendarInfo(createCalendarInfo(calendarInfoID, courseDesc, courseHours, courseCredits, calendarRef, calendarInfo.outline));
-    }, [courseDesc, courseHours, courseCredits, calendarRef, calendarInfo.outline
-    ])
+        setCalendarInfo(createCalendarInfo(
+            calendarInfo.id, courseDesc, calendarInfo.hours,
+            calendarInfo.credits, calendarInfo.calendar_reference, outlineID))
+    }, [courseDesc])
+
+    useEffect(() => {
+        setCalendarInfo(createCalendarInfo(
+            calendarInfo.id, calendarInfo.description, courseHours,
+            calendarInfo.credits, calendarInfo.calendar_reference, outlineID))
+    }, [courseHours])
+
+    useEffect(() => {
+        setCalendarInfo(createCalendarInfo(
+            calendarInfo.id, calendarInfo.description, calendarInfo.hours,
+            courseCredits, calendarInfo.calendar_reference, outlineID))
+    }, [courseCredits])
+
+    useEffect(() => {
+        setCalendarInfo(createCalendarInfo(
+            calendarInfo.id, calendarInfo.description, calendarInfo.hours,
+            calendarInfo.credit, calendarRef, outlineID))
+    }, [calendarRef])
+
+    useEffect(() => {
+        getCalendarInformation();
+    }, [])
 
     return (
         <Box width="95%" align='left'>
@@ -516,35 +311,91 @@ function CalendarInfo(props) {
     );
 };
 
-function LearningOutcomes() {
+function LearningOutcomes(props) {
 
-    const createRow = (one, two, three) => {
-        return { one, two, three };
-    };
-    const [tableRows, setTableRows] = useState([createRow("", "", "")]);
+    const { save, outlineID } = props
+
+    const createLearningOutcome = (id, number, outcome, attribute, level, outline) => {
+        return { id, number, outcome, attribute, level, outline }
+    }
+
+    const [learningOutcomes, setLearningOutcomes] = useState([createLearningOutcome(null, "0", "", "", "", outlineID)]);
+
+    const [postReady, setPostReady] = useState(false)
+
+    const getLearningOutcomes = async () => {
+        try {
+            axios.get(`${baseUrl}learningoutcomes/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('learning outcome data found');
+                        setLearningOutcomes(response.data);
+                    } else {
+                        console.log('no learning outcome data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const manageLearningOutcomes = async () => {
+
+        try {
+            axios.get(`${baseUrl}learningoutcomes/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}learningoutcomes/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    learningOutcomes.map((row) => {
+                        axios.post(`${baseUrl}learningoutcomes/`, {
+                            number: row.number,
+                            outcome: row.outcome,
+                            attribute: row.attribute,
+                            level: row.level,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('updated learning outcomes in backend'))
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            manageLearningOutcomes()
+        }
+    }, [save])
+
+    useEffect(() => {
+        getLearningOutcomes();
+    }, [])
+
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+
+        let newRows = [...learningOutcomes]
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setLearningOutcomes(newRows);
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
+        let arr = [...learningOutcomes]
         arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        setLearningOutcomes(arr)
     };
+
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("", "", "")]));
-        console.log(tableRows)
+        let arr = [...learningOutcomes]
+        arr = arr.concat(createLearningOutcome(null, (arr.length - 1), "", "", "", outlineID))
+        setLearningOutcomes(arr)
     };
+
     const [editIdx, setEditIdx] = useState(-1);
     const startEdit = idx => {
         setEditIdx(idx);
@@ -558,7 +409,6 @@ function LearningOutcomes() {
             <h2>
                 2. Learning Outcomes
             </h2>
-
             <div>
                 <TableContainer>
                     <Table>
@@ -570,29 +420,27 @@ function LearningOutcomes() {
                                 <TableCell>Instruction Level</TableCell>
                                 <TableCell>Edit</TableCell>
                                 <TableCell>Delete</TableCell>
-
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {learningOutcomes.map((row, index) => (
                                 <TableRow key={index}>
                                     <TableCell align="left">
                                         {index + "  "}
                                     </TableCell>
-
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Learning Outcome' />
+                                            <TextField defaultValue={row.outcome}
+                                                onChange={(e) => setValue(index, 'outcome', e.target.value)} placeholder='Enter Learning Outcome' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.outcome}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
                                             <Select
-                                                defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} >
+                                                defaultValue={row.attribute}
+                                                onChange={(e) => setValue(index, 'attribute', e.target.value)} >
                                                 <MenuItem value="">
                                                     <em>None</em>
                                                 </MenuItem>
@@ -611,13 +459,13 @@ function LearningOutcomes() {
                                             </Select>
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.two}
+                                            {row.attribute}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
                                             <Select
-                                                defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} >
+                                                defaultValue={row.level}
+                                                onChange={(e) => setValue(index, 'level', e.target.value)} >
                                                 <MenuItem value="">
                                                     <em>None</em>
                                                 </MenuItem>
@@ -627,7 +475,7 @@ function LearningOutcomes() {
                                             </Select>
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.three}
+                                            {row.level}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -648,52 +496,99 @@ function LearningOutcomes() {
                         </TableBody>
                     </Table>
                 </TableContainer>
-
                 <br />
-
                 <div>
                     <Button onClick={addRow} variant='contained' color='primary'>
                         Create Row
                             </Button>
                 </div>
             </div>
-
             <br></br>
             <br></br>
         </Box>
     );
 };
 
-function Timetable() {
+function Timetable(props) {
 
-    //id, section, days, time, location, outline (outlineID)
-    const createRow = (one, two, three, four) => {
-        return { one, two, three, four };
-    };
-    const [tableRows, setTableRows] = useState([createRow("", "", "", "")]);
+    const { save, outlineID } = props
+
+    const createTimetable = (id, section, days, time, location, outline) => {
+        return { id, section, days, time, location, outline }
+    }
+
+    const [timetables, setTimetables] = useState([createTimetable(null, "", "", "", "", outlineID)]);
+
+    const getTimetables = async () => {
+        try {
+            axios.get(`${baseUrl}timetables/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('timetable data found');
+                        setTimetables(response.data);
+                    } else {
+                        console.log('no timetable data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const manageTimetables = async () => {
+
+        try {
+            axios.get(`${baseUrl}timetables/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}timetables/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    timetables.map((row) => {
+                        axios.post(`${baseUrl}timetables/`, {
+                            section: row.section,
+                            days: row.days,
+                            time: row.time,
+                            location: row.location,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('timetables updated in backend'))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            manageTimetables()
+        }
+    }, [save])
+
+    useEffect(() => {
+        getTimetables();
+    }, [])
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+        let newRows = [...timetables];
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setTimetables(newRows);
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
+        let arr = [...timetables]
         arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        setTimetables(arr)
     };
+
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("", "", "", "")]));
-        console.log(tableRows)
+        let arr = [...timetables]
+        arr = arr.concat(createTimetable(null, "", "", "", "", outlineID))
+        setTimetables(arr);
     };
+
     const [editIdx, setEditIdx] = useState(-1);
     const startEdit = idx => {
         setEditIdx(idx);
@@ -723,40 +618,40 @@ function Timetable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {timetables.map((row, index) => (
                                 <TableRow key={index}>
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Section' />
+                                            <TextField defaultValue={row.section}
+                                                onChange={(e) => setValue(index, 'section', e.target.value)} placeholder='Enter Section' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.section}
                                         </TableCell>)}
 
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Day(s) of Week' />
+                                            <TextField defaultValue={row.days}
+                                                onChange={(e) => setValue(index, 'days', e.target.value)} placeholder='Enter Day(s) of Week' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.two}
+                                            {row.days}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.three}
-                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Time' />
+                                            <TextField defaultValue={row.time}
+                                                onChange={(e) => setValue(index, 'time', e.target.value)} placeholder='Enter Time' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.three}
+                                            {row.time}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.four}
-                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Location' />
+                                            <TextField defaultValue={row.location}
+                                                onChange={(e) => setValue(index, 'location', e.target.value)} placeholder='Enter Location' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.four}
+                                            {row.location}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -793,35 +688,92 @@ function Timetable() {
     );
 };
 
-function CourseInstructors() {
+function CourseInstructors(props) {
 
-    const createRow = (one, two, three, four, five, six) => {
-        return { one, two, three, four, five, six };
-    };
-    const [tableRows, setTableRows] = useState([createRow("", "", "", "", "", "")]);
+    const { save, outlineID } = props
+
+    const createInstructor = (id, section, first_name, last_name, phone, office, email, outline) => {
+        return { id, section, first_name, last_name, phone, office, email, outline }
+    }
+
+    const [instructors, setInstructors] = useState([createInstructor(null, "", "", "", "", "", "", outlineID)]);
+
+
+    const getInstructors = async () => {
+        try {
+            axios.get(`${baseUrl}instructors/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('instructor data found');
+                        setInstructors(response.data);
+                    } else {
+                        console.log('no instructor data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const manageInstructors = async () => {
+
+        try {
+            axios.get(`${baseUrl}instructors/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}instructors/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    instructors.map((row) => {
+                        axios.post(`${baseUrl}instructors/`, {
+                            section: row.section,
+                            first_name: row.first_name,
+                            last_name: row.last_name,
+                            phone: row.phone,
+                            office: row.office,
+                            email: row.email,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('instructors updated in backend'))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            manageInstructors()
+        }
+    }, [save])
+
+    
+
+    useEffect(() => {
+        getInstructors();
+    }, [])
+
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+        let newRows = [...instructors];
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setInstructors(newRows);
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
-        arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        let arr = [...instructors];
+        arr.splice(index, 1);
+        setInstructors(arr);
     };
+
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("", "", "", "", "", "")]));
-        console.log(tableRows)
+        let arr = [...instructors]
+        arr = arr.concat(createInstructor(null, "", "", "", "", "", "", outlineID))
+        setInstructors(arr);
     };
+
     const [editIdx, setEditIdx] = useState(-1);
     const startEdit = idx => {
         setEditIdx(idx);
@@ -843,7 +795,7 @@ function CourseInstructors() {
                             <TableRow>
                                 <TableCell>Section</TableCell>
                                 <TableCell>First Name</TableCell>
-                                <TableCell>Family Name</TableCell>
+                                <TableCell>Last Name</TableCell>
                                 <TableCell>Phone</TableCell>
                                 <TableCell>Office</TableCell>
                                 <TableCell>Email</TableCell>
@@ -853,56 +805,56 @@ function CourseInstructors() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {instructors.map((row, index) => (
                                 <TableRow key={index}>
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Section' />
+                                            <TextField defaultValue={row.section}
+                                                onChange={(e) => setValue(index, 'section', e.target.value)} placeholder='Enter Section' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.section}
                                         </TableCell>)}
 
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter First Name' />
+                                            <TextField defaultValue={row.first_name}
+                                                onChange={(e) => setValue(index, 'first_name', e.target.value)} placeholder='Enter First Name' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.two}
+                                            {row.first_name}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.three}
-                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Family Name' />
+                                            <TextField defaultValue={row.last_name}
+                                                onChange={(e) => setValue(index, 'last_name', e.target.value)} placeholder='Enter Family Name' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.three}
+                                            {row.last_name}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.four}
-                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Phone' />
+                                            <TextField defaultValue={row.phone}
+                                                onChange={(e) => setValue(index, 'phone', e.target.value)} placeholder='Enter Phone' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.four}
+                                            {row.phone}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.five}
-                                                onChange={(e) => setValue(index, 'five', e.target.value)} placeholder='Enter Office' />
+                                            <TextField defaultValue={row.office}
+                                                onChange={(e) => setValue(index, 'office', e.target.value)} placeholder='Enter Office' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.five}
+                                            {row.office}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.four}
-                                                onChange={(e) => setValue(index, 'six', e.target.value)} placeholder='Enter Email' />
+                                            <TextField defaultValue={row.email}
+                                                onChange={(e) => setValue(index, 'email', e.target.value)} placeholder='Enter Email' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.six}
+                                            {row.email}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -939,9 +891,78 @@ function CourseInstructors() {
     );
 };
 
-function Examinations() {
 
-    const [examInfo, setExamInfo] = useState("");
+function Examinations(props) {
+
+    const { save, outlineID } = props
+
+    const createExamination = (id, text, outline) => {
+        return { id, text, outline }
+    }
+
+    const [examinations, setExaminations] = useState(createExamination(null, "", outlineID));
+
+    const [examInfo, setExamInfo] = useState(examinations.text);
+
+    const getExaminations = async () => {
+        try {
+            axios.get(`${baseUrl}examinations/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('examination data found');
+                        setExaminations(response.data[0]);
+                    } else {
+                        console.log('no examination data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const saveExaminations = async () => {
+        if (examinations.id == null) {
+            try {
+                console.log('posting examinations')
+                axios.post(`${baseUrl}examinations/`, {
+                    text: examinations.text,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setExaminations(response.data);
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                console.log('putting examinations')
+                axios.put(`${baseUrl}examinations/${examinations.id}/`, {
+                    text: examinations.text,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setExaminations(response.data);
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            saveExaminations();
+        }
+    }, [save])
+
+    useEffect(() => {
+        getExaminations();
+    }, [])
+
+    useEffect(() => {
+        setExaminations(createExamination(examinations.id, examInfo, examinations.outline));
+    }, [examInfo])
 
     return (
         <Box Box width="95%" align='left'>
@@ -956,6 +977,7 @@ function Examinations() {
                 rows={12}
                 rowsMax={12}
                 fullWidth={true}
+                value={examinations.text}
                 placeholder="Enter Examination Information"
                 onChange={(e) => setExamInfo(e.target.value)}
             />
@@ -966,9 +988,77 @@ function Examinations() {
 
 };
 
-function UseOfCalculators() {
+function UseOfCalculators(props) {
 
-    const [calculators, setCalculators] = useState("");
+    const { save, outlineID } = props;
+
+    const createCalculator = (id, text, outline) => {
+        return { id, text, outline }
+    }
+
+    const [calculators, setCalculators] = useState(createCalculator(null, "", outlineID));
+
+    const [calculatorsInfo, setCalculatorsInfo] = useState(calculators.text);
+
+    const getCalculators = async () => {
+        try {
+            axios.get(`${baseUrl}calculators/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('calculators data found');
+                        setCalculators(response.data[0]);
+                    } else {
+                        console.log('no calculators data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const saveCalculators = async () => {
+        if (calculators.id == null) {
+            try {
+                console.log('posting calculators')
+                axios.post(`${baseUrl}calculators/`, {
+                    text: calculators.text,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setCalculators(response.data);
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            try {
+                console.log('putting calculators')
+                axios.put(`${baseUrl}calculators/${calculators.id}/`, {
+                    text: calculators.text,
+                    outline: outlineID
+                }
+                ).then((response) => {
+                    setCalculators(response.data);
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
+    useEffect(() => {
+        setCalculators(createCalculator(calculators.id, calculatorsInfo, calculators.outline));
+    }, [calculatorsInfo])
+
+    useEffect(() => {
+        getCalculators();
+    }, [])
+
+    useEffect(() => {
+        if (save == true) {
+            saveCalculators();
+        }
+    }, [save])
 
     return (
         <Box width="95%" align='left'>
@@ -980,7 +1070,8 @@ function UseOfCalculators() {
 
                 fullWidth={true}
                 placeholder="Enter Calculator Policy"
-                onChange={(e) => setCalculators(e.target.value)}
+                value={calculators.text}
+                onChange={(e) => setCalculatorsInfo(e.target.value)}
                 border={1}
             />
 
@@ -990,59 +1081,63 @@ function UseOfCalculators() {
     );
 };
 
-function FinalGradeDetermination() {
+function FinalGradeDetermination(props) {
 
-    const createRow = (one, two, three) => {
-        return { one, two, three };
-    };
-    const [tableRows, setTableRows] = useState([createRow("", "", "")]);
+    const { save, outlineID } = props
+
+    const createGradeComponent = (id, component, outcomes, weight, outline) => {
+        return { id, component, outcomes, weight, outline }
+    }
+
+    const [gradeComponents, setGradeComponents] = useState([createGradeComponent(null, "", outlineID)]);
+
+    const getGradeComponents = async () => {
+        try {
+            axios.get(`${baseUrl}finalgradecomponents/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('final grade component data found');
+                        setGradeComponents(response.data);
+                    } else {
+                        console.log('no final grade component data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const [sum, setSum] = useState(0);
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+        let newRows = [...gradeComponents];
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setGradeComponents(newRows);
         updateSum();
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
+        let arr = [...gradeComponents]
         arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        setGradeComponents(arr)
         let total = 0;
-        for (let i = 0; i < arr.length; i++) {
-            console.log(parseInt(arr[i]["three"]));
-            let n = parseInt(arr[i]["three"])
-            {
-                Number.isInteger(n) ?
-                    (total += n) :
-                    (total += 0)
-            }
-        };
-        setSum(total);
+        updateSum();
+    };
 
-    };
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("", "", "")]));
-        console.log(tableRows)
+        let arr = [...gradeComponents]
+        arr = arr.concat([createGradeComponent(null, "", "", "", outlineID)])
+        setGradeComponents(arr);
     };
+
     const updateSum = () => {
         let total = 0;
-        for (let i = 0; i < tableRows.length; i++) {
-            console.log(parseInt(tableRows[i]["three"]));
-            let n = parseInt(tableRows[i]["three"])
-            {
-                Number.isInteger(n) ?
-                    (total += n) :
-                    (total += 0)
-            }
+        for (let i = 0; i < gradeComponents.length; i++) {
+            let n = parseInt(gradeComponents[i]["weight"])
+            Number.isInteger(n) ?
+                (total += n) :
+                (total += 0)
+
         };
         setSum(total);
     };
@@ -1053,6 +1148,45 @@ function FinalGradeDetermination() {
     const stopEdit = () => {
         setEditIdx(-1);
     };
+
+    const manageGradeComponents = async () => {
+
+        try {
+            axios.get(`${baseUrl}finalgradecomponents/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}finalgradecomponents/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    gradeComponents.map((row) => {
+                        axios.post(`${baseUrl}finalgradecomponents/`, {
+                            component: row.component,
+                            outcomes: row.outcomes,
+                            weight: row.weight,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('final grade components updated in backend'))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            manageGradeComponents();
+        }
+    }, [save])
+
+    useEffect(() => {
+        getGradeComponents();
+    }, [])
+
+    useEffect(() => {
+        updateSum();
+    }, [gradeComponents])
 
 
     return (
@@ -1075,31 +1209,31 @@ function FinalGradeDetermination() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {gradeComponents.map((row, index) => (
                                 <TableRow key={index}>
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Component' />
+                                            <TextField defaultValue={row.component}
+                                                onChange={(e) => setValue(index, 'component', e.target.value)} placeholder='Enter Component' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.component}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Outcomes' />
+                                            <TextField defaultValue={row.outcome}
+                                                onChange={(e) => setValue(index, 'outcome', e.target.value)} placeholder='Enter Outcomes' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.two}
+                                            {row.outcome}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.three}
-                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Weight' />
+                                            <TextField defaultValue={row.weight}
+                                                onChange={(e) => setValue(index, 'weight', e.target.value)} placeholder='Enter Weight' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.three}
+                                            {row.weight}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -1143,34 +1277,84 @@ function FinalGradeDetermination() {
 
 };
 
-function Textbook() {
+function Textbook(props) {
 
-    const createRow = (one, two, three, four, five) => {
-        return { one, two, three, four, five };
-    };
-    const [tableRows, setTableRows] = useState([createRow("", "", "", "", "")]);
+    const { save, outlineID } = props
+
+    const createTextbook = (id, title, author, year, publisher, requirement, outline) => {
+        return { id, title, author, year, publisher, requirement, outline }
+    }
+
+    const [textbooks, setTextbooks] = useState([createTextbook(null, "", "", "", "", "", outlineID)]);
+
+    const getTextbooks = async () => {
+        try {
+            axios.get(`${baseUrl}textbooks/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('textbook data found');
+                        setTextbooks(response.data);
+                    } else {
+                        console.log('no textbook data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const manageTextbooks = async () => {
+
+        try {
+            axios.get(`${baseUrl}textbooks/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}textbooks/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    textbooks.map((row) => {
+                        axios.post(`${baseUrl}textbooks/`, {
+                            title: row.title,
+                            author: row.author,
+                            year: row.year,
+                            publisher: row.publisher,
+                            requirement: row.requirement,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('final grade components updated in backend'))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            manageTextbooks();
+        }
+    }, [save])
+
+    useState(() => {
+        getTextbooks();
+    }, [])
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+        let newRows = [...textbooks];
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setTextbooks(newRows);
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
+        let arr = [...textbooks]
         arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        setTextbooks(arr)
     };
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("", "", "", "", "")]));
-        console.log(tableRows)
+        let arr = [...textbooks]
+        arr = arr.concat(createTextbook(null, "", "", "", "", "", outlineID))
+        setTextbooks(arr);
     };
     const [editIdx, setEditIdx] = useState(-1);
     const startEdit = idx => {
@@ -1202,46 +1386,46 @@ function Textbook() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {textbooks.map((row, index) => (
                                 <TableRow key={index}>
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Title' />
+                                            <TextField defaultValue={row.title}
+                                                onChange={(e) => setValue(index, 'title', e.target.value)} placeholder='Enter Title' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.title}
                                         </TableCell>)}
 
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.two}
-                                                onChange={(e) => setValue(index, 'two', e.target.value)} placeholder='Enter Author' />
+                                            <TextField defaultValue={row.author}
+                                                onChange={(e) => setValue(index, 'author', e.target.value)} placeholder='Enter Author' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.two}
+                                            {row.author}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.three}
-                                                onChange={(e) => setValue(index, 'three', e.target.value)} placeholder='Enter Edition, Year' />
+                                            <TextField defaultValue={row.year}
+                                                onChange={(e) => setValue(index, 'year', e.target.value)} placeholder='Enter Edition, Year' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.three}
+                                            {row.year}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.four}
-                                                onChange={(e) => setValue(index, 'four', e.target.value)} placeholder='Enter Publisher' />
+                                            <TextField defaultValue={row.publisher}
+                                                onChange={(e) => setValue(index, 'publisher', e.target.value)} placeholder='Enter Publisher' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.four}
+                                            {row.publisher}
                                         </TableCell>)}
                                     {editIdx === index ? (
                                         <TableCell align="left">
                                             <Select
-                                                defaultValue={row.five}
-                                                onChange={(e) => setValue(index, 'five', e.target.value)} >
+                                                defaultValue={row.requirement}
+                                                onChange={(e) => setValue(index, 'requirement', e.target.value)} >
                                                 <MenuItem value="">
                                                     <em>None</em>
                                                 </MenuItem>
@@ -1250,7 +1434,7 @@ function Textbook() {
                                             </Select>
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.five}
+                                            {row.requirement}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -1287,35 +1471,83 @@ function Textbook() {
     );
 };
 
-function CoursePolicies() {
+function CoursePolicies(props) {
 
-    const createRow = (one) => {
-        return { one };
-    };
-    const [tableRows, setTableRows] = useState([createRow("")]);
+    const { save, outlineID } = props
+
+    const createPolicy = (id, policy, outline) => {
+        return { id, policy, outline }
+    }
+
+    const [policies, setPolicies] = useState([createPolicy(null, "", outlineID)]);
+
+    const getPolicies = async () => {
+        try {
+            axios.get(`${baseUrl}policies/?outline=${outlineID}`)
+                .then((response) => {
+                    if (response.data.length !== 0) {
+                        console.log('policy data found');
+                        setPolicies(response.data);
+                    } else {
+                        console.log('no policy data found');
+                    }
+                })
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const managePolicies = async () => {
+
+        try {
+            axios.get(`${baseUrl}policies/?outline=${outlineID}`)
+                .then((response) => {
+                    response.data.map((record) => {
+                    axios.delete(`${baseUrl}policies/${record.id}/`);
+                    })
+                })
+                .then(() => {
+                    policies.map((row) => {
+                        axios.post(`${baseUrl}policies/`, {
+                            policy: row.policy,
+                            outline: outlineID
+                        }
+                        )
+                    })
+                }).then(() => console.log('final grade components updated in backend'))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        if (save == true) {
+            managePolicies();
+        }
+    }, [save])
+
+    useEffect(() => {
+        getPolicies();
+    }, [])
+
     const setValue = (index, column, value) => {
-        let newRows = tableRows;
+        let newRows = [...policies];
         newRows[index][column] = value;
-        setTableRows(newRows);
-        console.log(tableRows);
+        setPolicies(newRows);
     };
+
     const deleteRow = (index) => {
-        console.log(index)
-        console.log(tableRows)
-
-        let arr = [...tableRows]
-
+        let arr = [...policies]
         arr.splice(index, 1)
-
-        setTableRows(arr)
-
-        console.log(tableRows)
-
+        setPolicies(arr)
     };
+
     const addRow = () => {
-        setTableRows(tableRows.concat([createRow("")]));
-        console.log(tableRows)
+        let arr = [...policies]
+        arr = arr.concat(createPolicy(null, "", outlineID))
+        setPolicies(arr);
     };
+
     const [editIdx, setEditIdx] = useState(-1);
     const startEdit = idx => {
         setEditIdx(idx);
@@ -1342,19 +1574,19 @@ function CoursePolicies() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {tableRows.map((row, index) => (
+                            {policies.map((row, index) => (
                                 <TableRow key={index}>
                                     {editIdx === index ? (
                                         <TableCell align="left">
-                                            <TextField defaultValue={row.one}
+                                            <TextField defaultValue={row.policy}
                                                 multiline={true}
                                                 rows={12}
                                                 rowsMax={12}
                                                 fullWidth={true}
-                                                onChange={(e) => setValue(index, 'one', e.target.value)} placeholder='Enter Policy' />
+                                                onChange={(e) => setValue(index, 'policy', e.target.value)} placeholder='Enter Policy' />
                                         </TableCell>) :
                                         (<TableCell>
-                                            {row.one}
+                                            {row.policy}
                                         </TableCell>)}
                                     <TableCell>
                                         {editIdx !== index ? (
@@ -1412,7 +1644,7 @@ function MenuBar({ handleSaveOpen, handleSave }) {
 
 function CreateSaveDialog({ open, handleSaveClose }) {
     return (
-        <Dialog open={open}>
+        <Dialog open={false}>
             <DialogTitle>
                 Outline Created
         </DialogTitle>
