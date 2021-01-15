@@ -11,6 +11,8 @@ Hunter Kimmett
 - node
 - material-ui/core
 - maerial-ui/icons
+- axios
+- react-router
 
 #### backend
 - django
