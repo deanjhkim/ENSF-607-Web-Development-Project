@@ -1,7 +1,7 @@
 # ENSF-607-Web-Development-Project
-Evan Boerchers
-Dean Kim
-Hunter Kimmett
+Evan Boerchers\n
+Dean Kim\n
+Hunter Kimmett\n
 
 ## Dependencies
 
@@ -11,6 +11,8 @@ Hunter Kimmett
 - node
 - material-ui/core
 - maerial-ui/icons
+- axios
+- react-router
 
 #### backend
 - django
