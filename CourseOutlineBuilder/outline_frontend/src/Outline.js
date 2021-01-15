@@ -79,9 +79,10 @@ function Outline() {
 
         <div className="Outline">
             <MenuBar handleSaveOpen={handleSaveOpen} handleSave={handleSave} />
-            <Grid container justify='center'>
-                <Grid item align='center'>
+            <Grid container justify='center' align='center'>
+                <Box alignItems='center' justifyContent='center' width={0.95}>
                     <Box component={Paper} align='left'>
+                        <br></br>
                         <br></br>
                         <br></br>
                         <br></br>
@@ -98,7 +99,7 @@ function Outline() {
                         </h2>
                         <br></br>
 
-                        <Box border={2} align='center'>
+                        <Box border={2} align='center' width={1}>
                             <CalendarInfo outlineID={outlineID} save={save} />
                         </Box>
                         <br></br>
@@ -154,7 +155,7 @@ function Outline() {
 
                         <CreateSaveDialog open={save} handleSaveClose={handleSaveClose} />
                     </Box>
-                </Grid>
+                </Box>
             </Grid>
         </div >
     );
@@ -1260,6 +1261,7 @@ function FinalGradeDetermination(props) {
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="right">Total Weight:</TableCell>
                                 <TableCell align="left">{sum}</TableCell>
+                                <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
                             </TableRow>
                         </TableBody>
