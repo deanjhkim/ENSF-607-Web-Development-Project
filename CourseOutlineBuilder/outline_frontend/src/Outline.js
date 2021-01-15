@@ -2,7 +2,6 @@ import React from 'react';
 import { useState, useEffect } from "react";
 import { ButtonGroup } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { ButtonGroup } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
 import Table from '@material-ui/core/Table';
@@ -34,11 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
     toolbarButtons: {
         marginLeft: 'auto',
-<<<<<<< HEAD
     }
-=======
-      }
->>>>>>> 5b4706f0948676c4a2fe6ee66640ed79c1459a65
 
 }));
 
@@ -80,66 +75,6 @@ function Outline() {
         handleSaveOpen()
     };
 
-<<<<<<< HEAD
-=======
-    const homeButton = () => {
-        
-        
-        return (
-        <Link to="/">
-        <Button variant="contained" color="primary" >
-            Home
-        </Button>
-        </Link>
-        );
-    }
-
-    const saveCalendarInfo = async () => {
-        console.log(calendarInfo.id)
-        if (calendarInfo.id == null) {
-            try {
-                console.log('posting calendar info')
-                axios.post(`${baseUrl}calendarinformation/`, {
-                    description: calendarInfo.description,
-                    hours: calendarInfo.hours,
-                    credit: calendarInfo.credit,
-                    calendar_reference: calendarInfo.calendar_reference,
-                    outline: outlineID
-                }
-                ).then((response) => {
-                    setCalendarInfo(response.data);
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        } else {
-            try {
-                console.log('putting calendar info')
-                axios.put(`${baseUrl}calendarinformation/${calendarInfo.id}/`, {
-                    description: calendarInfo.description,
-                    hours: calendarInfo.hours,
-                    credit: calendarInfo.credit,
-                    calendar_reference: calendarInfo.calendar_reference,
-                    outline: outlineID
-                }
-                ).then((response) => {
-                    setCalendarInfo(response.data);
-                    console.log(response)
-                })
-            } catch (error) {
-                console.log(error)
-            }
-        }
-        // else {
-        //     console.log('putting calendar info')
-        //     console.log(calendarInfo)
-        //     axios.put(`${baseUrl}calendarinformation/${calendarInfo.id}/`, calendarInfo).then((response) => {
-        //         console.log(response);
-        //     });;
-        // }
-    }
-
->>>>>>> 5b4706f0948676c4a2fe6ee66640ed79c1459a65
     return (
 
         <div className="Outline">
@@ -1692,7 +1627,6 @@ function CoursePolicies(props) {
         </Box>
     );
 };
-
 
 function MenuBar({ handleSaveOpen, handleSave }) {
 
