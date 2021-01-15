@@ -139,6 +139,8 @@ function CreateFormDialog({ open, handleCreateClose, outlines, setOutlines }) {
     }
   }
 
+  
+
   const addOutline = (outline) => {
     let _outlines = [...outlines]
     _outlines.push(outline)
@@ -165,6 +167,8 @@ function CreateFormDialog({ open, handleCreateClose, outlines, setOutlines }) {
       handleCreateClose();
     }
   }
+
+ 
 
   const displayErrors = () => {
     console.log(facultyError);
@@ -222,9 +226,149 @@ function CreateFormDialog({ open, handleCreateClose, outlines, setOutlines }) {
   );
 }
 
+function CreateEditDialog({ open, handleEditClose, outlines, setOutlines, itemSelected }) {
+
+  const [faculty, setFaculty] = useState("");
+  const [facultyError, setFacultyError] = useState(false);
+
+  const [number, setNumber] = useState("");
+  const [numberError, setNumberError] = useState(false);
+
+  const [term, setTerm] = useState("");
+  const [termError, setTermError] = useState(false);
+
+  const [section, setSection] = useState("");
+  const [sectionError, setSectionError] = useState(false);
+
+  const [description, setDescription] = useState("");
+  const [descError, setDescError] = useState(false);
+
+  const checkFields = () => {
+    if (faculty === "" || faculty === null) {
+      setFacultyError(true);
+    } else {
+      setFacultyError(false)
+    }
+    if (number === "" || number === null) {
+      setNumberError(true);
+    } else {
+      setNumberError(false)
+    }
+    if (term === "" || term === null) {
+      setTermError(true);
+    } else {
+      setTermError(false)
+    }
+    if (section === "" || section === null) {
+      setSectionError(true);
+    } else {
+      setSectionError(false)
+    }
+    if (description === "" || section === null) {
+      setDescError(true);
+    } else {
+      setDescError(false)
+    }
+  };
+
+  const filledFields = () => {
+    if (facultyError === false && numberError === false
+      && termError === false && sectionError === false
+      && descError === false) {
+      return true;
+    } else return false;
+  };
+
+  const putOutline = async (outline) => {
+    try {
+      console.log("entering edit block")
+      console.log(outline.id)
+      console.log("checking for state issue")
+      axios.put(`${baseUrl}outlines/${outline.id}/`, {
+        faculty: outline.faculty,
+        number: outline.number,
+        term: outline.term,
+        section: outline.section,
+        description: outline.description,
+        date_created: outline.date_created
+      }).then(response => {
+        console.log(`posted outline ${response.data.id} to backend`);
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
+  const addOutline = (outline) => {
+    let _outlines = [...outlines]
+    _outlines.push(outline)
+    setOutlines(_outlines)
+  }
+
+  const handleEdit = () => {
+
+    console.log("handling outline editing...");
+    checkFields();
+
+
+    const outline = outlines[itemSelected]
+   
+
+    console.log("editing outline...");
+      // addOutline(outline);
+      putOutline(outline);
+      //update outline state
+      let arr = [...outlines]
+      arr[itemSelected] = outline
+
+      setOutlines(arr);
+      handleEditClose();
+  }
+
+  return (
+    <Dialog open={open}>
+      <DialogTitle>
+        Create New Outline
+      </DialogTitle>
+      <DialogContent>
+        <Grid container>
+          <Grid container>
+            <Grid item xs>
+              <TextField label='Faculty' onChange={e => setFaculty(e.target.value)} error={facultyError} helperText={facultyError ? "Field Required" : ''} />
+            </Grid>
+            <Grid item xs>
+              <TextField label='Number' onChange={e => setNumber(e.target.value)} error={numberError} helperText={numberError ? "Field Required" : ''} />
+            </Grid>
+          </Grid>
+          <Grid container>
+            <Grid item xs>
+              <TextField label='Term' error={termError} onChange={e => setTerm(e.target.value)} helperText={termError ? "Field Required" : ''} />
+            </Grid>
+            <Grid item xs>
+              <TextField label='Section' onChange={e => setSection(e.target.value)} error={sectionError} helperText={sectionError ? "Field Required" : ''} />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Box>
+          <TextField label='Description' fullWidth onChange={e => setDescription(e.target.value)} error={descError} helperText={descError ? "Field Required" : ''} />
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleEditClose} color="primary">
+          Cancel
+        </Button>
+        <Button color="primary" onClick={handleEdit}>
+          Confirm
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 function MenuBar(props) {
 
-  const { handleCreateOpen, handleOpen, handleDelete } = props
+  const { handleCreateOpen, handleOpen, handleDelete, handleEdit } = props
 
   const classes = useStyles()
 
@@ -239,8 +383,10 @@ function MenuBar(props) {
         <Box paddingRight={5} className={classes.toolbarButtons}>
           <ButtonGroup variant="contained" color="secondary" aria-label="outlined primary button group">
             <Button onClick={handleCreateOpen}>Create </Button>
+            <Button onClick={handleEdit}>Edit</Button>
             <Button onClick={handleOpen}>Open </Button>
             <Button onClick={handleDelete}>Delete</Button>
+
           </ButtonGroup>
         </Box>
       </Toolbar>
@@ -258,6 +404,8 @@ function Dashboard() {
   const [itemSelected, setItemSelected] = useState(null);
 
   const [selectedID, setSelectedID] = useState("1")
+
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     console.log('loading outlines from backend...')
@@ -295,6 +443,12 @@ function Dashboard() {
 
   const handleCreateClose = () => setCreateOpen(false);
 
+  const handleEditOpen = () => setEditOpen(true);
+
+  const handleEditClose = () => setEditOpen(false);
+
+  
+
   const handleDelete = () => {
     if (itemSelected >= 0 && itemSelected < outlines.length) {
       deleteOutline(outlines[itemSelected].id)
@@ -314,6 +468,17 @@ function Dashboard() {
     }
   }
 
+  const handleEdit = () => {
+    if (itemSelected >= 0 && itemSelected < outlines.length && outlines[itemSelected]!=null) {
+      const outlineID = outlines[itemSelected].id
+      console.log(`editing outline ${outlineID} ...`)
+      setEditOpen(true)
+     
+    } else if(outlines[itemSelected] == null && outlines.length > 0){
+      console.log('can\'t select outline to edit')
+    }
+  }
+
   const history = useHistory();
 
   const goToOutline = (id) => {
@@ -324,12 +489,12 @@ function Dashboard() {
   return (
     <div className="Dashboard">
 
-      <MenuBar handleCreateOpen={handleCreateOpen} handleOpen={handleOpen} handleDelete={handleDelete} />
+      <MenuBar handleCreateOpen={handleCreateOpen} handleOpen={handleOpen} handleDelete={handleDelete} handleEdit={handleEdit}/>
       <Box paddingTop={20}>
         <OutlineTable outlines={outlines} itemSelected={itemSelected} setItemSelected={setItemSelected} />
       </Box>
       <CreateFormDialog open={open} handleCreateClose={handleCreateClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} />
-
+      <CreateEditDialog open={editOpen} handleEditClose={handleEditClose} goToOutline={goToOutline} outlines={outlines} setOutlines={setOutlines} itemSelected = {itemSelected}/>
 
     </div >
 
