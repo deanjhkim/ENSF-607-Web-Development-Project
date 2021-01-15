@@ -1,7 +1,7 @@
 # ENSF-607-Web-Development-Project
-Evan Boerchers\n
-Dean Kim\n
-Hunter Kimmett\n
+Evan Boerchers,
+Dean Kim,
+Hunter Kimmett,
 
 ## Dependencies
 
