@@ -18,6 +18,7 @@ Hunter Kimmett,
 - django
 - djagno rest_framework
 - django-filter
+- django-cors-headers
 
 ## Running
 
