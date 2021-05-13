@@ -4,7 +4,7 @@ Evan Boerchers <br/>
 Dean Kim <br/>
 Hunter Kimmett <br/>
 
-This project contains the frontend and backend for a course outline builder concept.
+This project contains the frontend and backend for a course outline builder concept. Src files for outline frontend and backend are contained in seperate folders in CourseOutlineBuilder.
 
 ## Dependencies
 
