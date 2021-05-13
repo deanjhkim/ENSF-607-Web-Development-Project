@@ -1,5 +1,5 @@
 # Course Outline Builder
-Authors:<br/>
+**Authors:**<br/>
 Evan Boerchers <br/>
 Dean Kim <br/>
 Hunter Kimmett <br/>
