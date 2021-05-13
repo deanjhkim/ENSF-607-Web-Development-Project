@@ -1,7 +1,10 @@
-# ENSF-607-Web-Development-Project
-Evan Boerchers,
-Dean Kim,
-Hunter Kimmett,
+# Course Outline Builder
+Authors:
+Evan Boerchers <br/>
+Dean Kim <br/>
+Hunter Kimmett <br/>
+
+This project contains the frontend and backend for a course outline builder concept.
 
 ## Dependencies
 
@@ -23,7 +26,12 @@ Hunter Kimmett,
 ## Running
 
 #### frontend
-navigate to outline_backend folder. Enter command npm start
+- Ensure node and npm/yarn is installed on machine.
+- Navigate to CourseOutlineBuilder/outline_frontend folder. 
+- Run `npm install` to install needed packages.
+- Run `npm start` to start the local server.
 
 ### backend
-navigate to outline_backend folder. Enter command python manage.py runserver
+- Ensure the required dependencies are located in the enviroment in which the django server will be running.
+- Navigate to CourseOutlineBuilder/outline_backend folder. 
+- Enter command `python manage.py runserver`
